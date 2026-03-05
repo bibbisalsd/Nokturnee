@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Nokturne — Private modular bot framework for Rocket League." />
+  <title>Nokturne — Private SDK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body>
+
+  <div class="hero__lines" aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
+
+  <header class="navbar" role="banner">
+    <div class="navbar__inner">
+      <a href="index.html" class="navbar__brand" aria-label="Nokturne Home">
+        <img src="assets/images/nokturne-banner.png" alt="Nokturne Private SDK" class="navbar__logo" />
+      </a>
+      <nav class="navbar__links" aria-label="Primary navigation">
+        <a href="pages/features.html" class="navbar__link">Features</a>
+        <a href="pages/modules.html"  class="navbar__link">Modules</a>
+        <a href="pages/pricing.html"  class="navbar__link">Pricing</a>
+        <a href="pages/help.html"     class="navbar__link">Help</a>
+        <a href="pages/contact.html"  class="navbar__link">Contact</a>
+        <a href="pages/discord.html"  class="navbar__link" style="color:#5865F2;">Discord</a>
+        <a href="pages/forum.html"    class="navbar__link">Forum</a>
+      </nav>
+      <div class="navbar__actions">
+        <span class="navbar__version">v3.2.1</span>
+        <a href="pages/contact.html" class="btn btn-primary" style="padding:10px 24px;font-size:10px;">Get Access</a>
+        <button class="navbar__toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobileNav">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+    <a href="pages/features.html" class="mobile-nav__link">Features</a>
+    <a href="pages/modules.html"  class="mobile-nav__link">Modules</a>
+    <a href="pages/pricing.html"  class="mobile-nav__link">Pricing</a>
+    <a href="pages/help.html"     class="mobile-nav__link">Help</a>
+    <a href="pages/contact.html"  class="mobile-nav__link">Contact</a>
+    <a href="pages/contact.html"  class="btn btn-primary mobile-nav__cta">Get Access</a>
+  </nav>
+
+  <section id="home" class="hero" aria-label="Hero">
+    <canvas id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="hero__mesh"  aria-hidden="true"></div>
+    <div class="hero__noise" aria-hidden="true"></div>
+
+    <div class="hero__content container">
+      <div class="t-label hero__label">
+        <span class="t-label-line"></span>Private Framework<span class="t-label-line"></span>Rocket League
+      </div>
+      <h1 class="hero__title">
+        <span class="glitch-hover">NOK</span><span class="line-accent">T</span><span class="glitch-hover">URNE</span>
+      </h1>
+      <div class="hero__sub">
+        <span class="hero__sub-line" aria-hidden="true"></span>
+        <p class="hero__tagline">Precision-engineered · HWID-locked · Zero-latency</p>
+      </div>
+      <p class="t-body hero__body">
+        A <strong>modular, private framework</strong> for Rocket League built for mechanical dominance.
+        Low-latency physics prediction, hardware-bound distribution, and a plugin architecture designed for elite performance.
+      </p>
+      <div class="hero__ctas">
+        <a href="pages/contact.html" class="btn btn-primary">Get Access</a>
+        <a href="pages/discord.html" class="btn btn-discord-hero">
+          <svg width="16" height="13" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="white"/></svg>
+          Join Discord
+        </a>
+        <a href="pages/modules.html" class="btn btn-outline">View Modules</a>
+      </div>
+      <div class="hero__stats">
+        <div class="stat-item hud">
+          <div class="stat-item__icon">RL</div>
+          <div>
+            <div class="stat-item__value">N/A</div>
+            <div class="stat-item__text">Current Build</div>
+          </div>
+        </div>
+        <div class="stat-item hud">
+          <div class="stat-item__icon">MS</div>
+          <div>
+            <div class="stat-item__value">0.01–0.12ms</div>
+            <div class="stat-item__text">Input Latency</div>
+          </div>
+        </div>
+        <div class="stat-item hud">
+          <div class="stat-item__icon">LK</div>
+          <div>
+            <div class="stat-item__value">HWID</div>
+            <div class="stat-item__text">Auth Method</div>
+          </div>
+        </div>
+        <div class="stat-item hud">
+          <div class="stat-item__icon">EAC</div>
+          <div>
+            <div class="stat-item__value">ACTIVE</div>
+            <div class="stat-item__text">EAC Bypass</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__scroll" aria-hidden="true" style="display:none;">
+      <div class="hero__scroll-line"></div>
+      <span class="hero__scroll-label">scroll</span>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker-bar ticker-bar--primary" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="ticker-item">Nokturne v3.2.1 Live<span class="ticker-sep">◆</span></span>
+      <span class="ticker-item">HWID-Locked Distribution<span class="ticker-sep">◆</span></span>
+      <span class="ticker-item">48-Hour Patch Compatibility<span class="ticker-sep">◆</span></span>
+      <span class="ticker-item">Zero Public Checkout<span class="ticker-sep">◆</span></span>
+      <span class="ticker-item">Limited Slots Available<span class="ticker-sep">◆</span></span>
+      <span class="ticker-item">EAC Bypass Active<span class="ticker-sep">◆</span></span>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <section style="padding:80px 40px;position:relative;z-index:1;">
+    <div style="max-width:1280px;margin:0 auto;">
+      <div class="t-label" style="justify-content:center;margin-bottom:10px;">
+        <span class="t-label-line"></span>Community<span class="t-label-line"></span>
+      </div>
+      <h2 class="t-heading" style="text-align:center;margin-bottom:8px;">
+        WHAT MEMBERS <span class="accent-violet">SAY</span>
+      </h2>
+      <p style="text-align:center;color:var(--text-faint);font-size:13px;letter-spacing:0.08em;margin-bottom:48px;font-family:var(--font-mono);">Real reviews from verified users</p>
+
+      <div class="reviews-grid">
+        <div class="review-card reveal">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Genuinely insane. Never seen anything move this fast."</div>
+          <div class="review-meta"><span class="review-user">@ghostframe</span><span class="review-date">Jan 2026</span></div>
+        </div>
+        <div class="review-card reveal" data-delay="0.06">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Bot-A alone is worth every penny. The rotation logic is on another level."</div>
+          <div class="review-meta"><span class="review-user">@nullvector</span><span class="review-date">Dec 2025</span></div>
+        </div>
+        <div class="review-card reveal" data-delay="0.12">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Setup was seamless, support was fast. This is the real deal."</div>
+          <div class="review-meta"><span class="review-user">@kryptic_s</span><span class="review-date">Nov 2025</span></div>
+        </div>
+        <div class="review-card reveal" data-delay="0.04">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"The hitbox overlay alone changed how I play. Insanely clean."</div>
+          <div class="review-meta"><span class="review-user">@vexlore</span><span class="review-date">Jan 2026</span></div>
+        </div>
+        <div class="review-card reveal" data-delay="0.09">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Updates dropped within a day of the patch. Didn't miss a session."</div>
+          <div class="review-meta"><span class="review-user">@mantis_rl</span><span class="review-date">Feb 2026</span></div>
+        </div>
+        <div class="review-card reveal" data-delay="0.15">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"HWID lock gave me peace of mind. Felt personal, not like a mass product."</div>
+          <div class="review-meta"><span class="review-user">@obxidian</span><span class="review-date">Dec 2025</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="home-cta reveal">
+    <div class="home-cta__bg" aria-hidden="true"></div>
+    <div class="home-cta__inner">
+      <div class="t-label" style="justify-content:center;margin-bottom:14px;">
+        <span class="t-label-line"></span>Limited Access<span class="t-label-line"></span>
+      </div>
+      <h2 class="t-heading" style="text-align:center;margin-bottom:12px;">
+        READY TO <span class="accent-violet">DOMINATE?</span>
+      </h2>
+      <p style="color:var(--text-dim);font-size:15px;font-weight:300;max-width:420px;margin:0 auto 32px;text-align:center;line-height:1.75;">
+        Get access to the full Nokturne suite. Slots are limited and handled directly.
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="pages/contact.html" class="btn btn-primary" style="padding:16px 40px;font-size:12px;">Get Access Now</a>
+        <a href="pages/features.html" class="btn btn-outline" style="padding:15px 32px;font-size:12px;">View Features</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__brand">NOKTURNE</div>
+      <nav class="footer__links">
+        <a href="pages/features.html" class="footer__link">Features</a>
+        <a href="pages/modules.html"  class="footer__link">Modules</a>
+        <a href="pages/pricing.html"  class="footer__link">Pricing</a>
+        <a href="pages/help.html"     class="footer__link">Help</a>
+        <a href="pages/contact.html"  class="footer__link">Contact</a>
+        <a href="pages/discord.html"  class="footer__link" style="color:#5865F2;">Discord</a>
+        <a href="pages/forum.html"    class="footer__link">Forum</a>
+      </nav>
+      <div class="footer__copy">© <span id="year"></span> Nokturne. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>

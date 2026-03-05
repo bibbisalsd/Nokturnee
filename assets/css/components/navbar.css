@@ -1,0 +1,227 @@
+/* ============================================================
+   NOKTURNE — Navbar Component
+   ============================================================ */
+
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: var(--z-nav);
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  background: var(--bg-overlay);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-bottom: 1px solid var(--border);
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+.navbar.scrolled {
+  border-bottom-color: var(--border-mid);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px var(--violet-faint);
+}
+
+.navbar__inner {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--section-pad-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xl);
+}
+
+/* ── Brand ── */
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: opacity var(--dur-base);
+}
+.navbar__brand:hover { opacity: 0.82; }
+
+.navbar__logo {
+  height: 44px;
+  width: 330px;
+  object-fit: contain;
+  object-position: left center;
+  display: block;
+}
+
+/* ── Nav links ── */
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex: 1;
+  justify-content: center;
+}
+
+.navbar__link {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  position: relative;
+  padding-block: 4px;
+  transition: color var(--dur-base);
+}
+.navbar__link::before {
+  content: '//';
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--violet-dim);
+  margin-right: 5px;
+  transition: color var(--dur-base);
+}
+.navbar__link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 1px;
+  background: var(--cyan);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.navbar__link:hover { color: var(--cyan); }
+.navbar__link:hover::before { color: var(--violet); }
+.navbar__link:hover::after { transform: scaleX(1); }
+.navbar__link.active { color: var(--text); }
+.navbar__link.active::after { transform: scaleX(1); background: var(--violet); }
+
+/* ── Right side ── */
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-shrink: 0;
+}
+
+.navbar__version {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--violet);
+  padding: 4px 14px;
+  border: 1px solid var(--violet-dim);
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  letter-spacing: 0.1em;
+}
+
+/* ── Mobile menu btn ── */
+.navbar__toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: 1px solid var(--border-mid);
+  padding: 10px 12px;
+  cursor: pointer;
+  clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+  transition: border-color var(--dur-base);
+}
+.navbar__toggle:hover { border-color: var(--violet-dim); }
+.navbar__toggle span {
+  display: block;
+  width: 20px; height: 1.5px;
+  background: var(--text-dim);
+  transition: all var(--dur-base) var(--ease-out);
+}
+.navbar__toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); background: var(--violet); }
+.navbar__toggle.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.navbar__toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); background: var(--violet); }
+
+/* ── Mobile nav dropdown ── */
+.mobile-nav {
+  position: fixed;
+  top: var(--nav-height);
+  left: 0; right: 0;
+  z-index: calc(var(--z-nav) - 1);
+  background: rgba(8, 8, 16, 0.97);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-mid);
+  padding: var(--space-lg) var(--section-pad-h) var(--space-xl);
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.mobile-nav.open { display: flex; }
+
+.mobile-nav__link {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  transition: color var(--dur-base), padding-left var(--dur-base);
+}
+.mobile-nav__link:hover {
+  color: var(--violet);
+  padding-left: 8px;
+}
+.mobile-nav__link:last-of-type { border-bottom: none; }
+
+.mobile-nav__cta {
+  margin-top: var(--space-md);
+  align-self: flex-start;
+}
+
+/* ── Responsive ── */
+@media (max-width: 940px) {
+  .navbar__links { display: none; }
+  .navbar__version { display: none; }
+  .navbar__toggle { display: flex; }
+}
+@media (max-width: 600px) {
+  .navbar__inner { padding-inline: 16px; }
+}
+
+/* ── NTC + Role badge in navbar ── */
+.navbar__user-info {
+  display: flex; align-items: center; gap: 10px;
+}
+.navbar__ntc {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 12px;
+  background: rgba(155,48,255,0.1);
+  border: 1px solid var(--violet-dim);
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  color: var(--violet); letter-spacing: 0.06em; cursor: default;
+  transition: background 0.18s;
+}
+.navbar__ntc:hover { background: rgba(155,48,255,0.18); }
+.navbar__ntc-icon { font-size: 13px; color: var(--violet); }
+.navbar__ntc-label { font-size: 9px; letter-spacing: 0.2em; color: var(--text-faint); }
+
+.navbar__role-badge {
+  font-family: var(--font-mono); font-size: 8px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 3px 10px;
+  clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+  border: 1px solid;
+}
+.role-admin     { color: var(--cyan);    border-color: var(--cyan-dim);    background: var(--cyan-faint); }
+.role-mod       { color: #39FF80;        border-color: rgba(57,255,128,.35); background: rgba(57,255,128,.06); }
+.role-premium   { color: var(--violet);  border-color: var(--violet-dim);  background: var(--violet-faint); }
+.role-member    { color: var(--text-dim);border-color: var(--border-mid);  background: var(--bg-elevated); }
+.role-guest     { color: var(--text-faint);border-color: var(--border);    background: transparent; }
+
+.navbar__avatar-wrap {
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid var(--violet-dim); overflow: hidden;
+  transition: border-color 0.18s; text-decoration: none; flex-shrink: 0;
+}
+.navbar__avatar-wrap:hover { border-color: var(--violet); }
+.navbar__avatar { width: 100%; height: 100%; object-fit: cover; }

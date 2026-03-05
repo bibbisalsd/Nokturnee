@@ -1,0 +1,131 @@
+/* ============================================================
+   NOKTURNE — Homepage Scroll Sections
+   (Reviews grid · CTA banner)
+   ============================================================ */
+
+/* ── Discord hero button ── */
+.btn-discord-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  background: #5865F2;
+  color: white;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  transition: all 0.2s;
+}
+.btn-discord-hero:hover {
+  background: #4752C4;
+  box-shadow: 0 0 30px rgba(88,101,242,0.45);
+}
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+@media (max-width: 900px) { .reviews-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .reviews-grid { grid-template-columns: 1fr; } }
+
+.review-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  padding: 22px 22px 18px;
+  position: relative;
+  transition: border-color var(--dur-base) var(--ease-out),
+              background var(--dur-base) var(--ease-out);
+  cursor: default;
+}
+.review-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background var(--dur-base);
+}
+.review-card:hover {
+  border-color: var(--violet-dim);
+  background: var(--bg-elevated);
+}
+.review-card:hover::before {
+  background: linear-gradient(90deg, var(--violet), transparent 60%);
+}
+
+.review-stars {
+  color: var(--yellow);
+  font-size: 13px;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.review-text {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.review-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.review-user {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--violet);
+  text-transform: uppercase;
+}
+.review-date {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+}
+
+/* ── CTA Banner ── */
+.home-cta {
+  position: relative;
+  padding: 100px 40px;
+  text-align: center;
+  z-index: 1;
+  overflow: hidden;
+}
+.home-cta__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 80% at 50% 50%, rgba(155,48,255,0.10) 0%, transparent 65%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-surface) 50%, var(--bg) 100%);
+}
+.home-cta__bg::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--violet-faint) 30%, var(--cyan-faint) 70%, transparent);
+}
+.home-cta__bg::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--violet-faint) 30%, var(--cyan-faint) 70%, transparent);
+}
+.home-cta__inner { position: relative; z-index: 1; }

@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discord — Nokturne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <style>
+    html, body { height: 100%; overflow: hidden; }
+
+    .discord-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 24px;
+    }
+
+    .discord-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 60% at 50% 40%, rgba(88,101,242,0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 20% 70%, rgba(155,48,255,0.08) 0%, transparent 55%);
+    }
+
+    .discord-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        -50deg, transparent, transparent 56px,
+        rgba(88,101,242,0.015) 56px, rgba(88,101,242,0.015) 57px
+      );
+    }
+
+    .discord-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-surface);
+      border: 1px solid rgba(88,101,242,0.35);
+      clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+      box-shadow: 0 0 60px rgba(88,101,242,0.15), 0 24px 80px rgba(0,0,0,0.6);
+    }
+
+    .discord-card__head {
+      padding: 40px 40px 28px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      background: linear-gradient(135deg, rgba(88,101,242,0.10) 0%, transparent 60%);
+    }
+
+    .discord-icon {
+      width: 72px;
+      height: 72px;
+      background: #5865F2;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 30px rgba(88,101,242,0.4);
+    }
+
+    .discord-card__title {
+      font-family: var(--font-display);
+      font-size: 36px;
+      letter-spacing: 0.08em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .discord-card__title span { color: #5865F2; }
+
+    .discord-card__sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      font-weight: 300;
+      line-height: 1.65;
+    }
+
+    .discord-card__body {
+      padding: 28px 40px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .discord-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .discord-stat {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      padding: 12px 10px;
+      text-align: center;
+      clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+    }
+    .discord-stat__val {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.06em;
+      margin-bottom: 3px;
+    }
+    .discord-stat__key {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+
+    .btn-discord-main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 100%;
+      padding: 18px 24px;
+      background: #5865F2;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-discord-main:hover {
+      background: #4752C4;
+      box-shadow: 0 0 40px rgba(88,101,242,0.5);
+      transform: translateY(-1px);
+    }
+    .btn-discord-main:active { transform: translateY(0); }
+
+    .discord-note {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+
+    .discord-perks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .discord-perk {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+      font-size: 12px;
+      color: var(--text-dim);
+      font-weight: 300;
+    }
+    .discord-perk::before {
+      content: '✓';
+      color: #5865F2;
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="discord-bg"   aria-hidden="true"></div>
+  <div class="discord-grid" aria-hidden="true"></div>
+
+  <div class="discord-wrap">
+    <div class="discord-card">
+
+      <div class="discord-card__head">
+        <div class="discord-icon">
+          <svg width="36" height="28" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="white"/>
+          </svg>
+        </div>
+        <div class="discord-card__title">NOK<span>T</span>URNE</div>
+        <p class="discord-card__sub">Join the private community. Get support, updates, and connect with other members.</p>
+      </div>
+
+      <div class="discord-card__body">
+
+        <div class="discord-stats">
+          <div class="discord-stat">
+            <div class="discord-stat__val">Private</div>
+            <div class="discord-stat__key">Server</div>
+          </div>
+          <div class="discord-stat">
+            <div class="discord-stat__val" style="color:#5865F2;">Active</div>
+            <div class="discord-stat__key">Status</div>
+          </div>
+          <div class="discord-stat">
+            <div class="discord-stat__val">24/7</div>
+            <div class="discord-stat__key">Support</div>
+          </div>
+        </div>
+
+        <div class="discord-perks">
+          <div class="discord-perk">Private member channels and announcements</div>
+          <div class="discord-perk">Direct support from the development team</div>
+          <div class="discord-perk">Early access to updates and new modules</div>
+          <div class="discord-perk">Special roles for premium users</div>
+        </div>
+
+        <a href="https://discord.gg/a4yxzKzPbx" target="_blank" rel="noopener noreferrer" class="btn-discord-main">
+          <svg width="20" height="16" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z" fill="white"/>
+          </svg>
+          Join the Discord
+        </a>
+
+        <p class="discord-note">Opens discord.gg/a4yxzKzPbx in a new tab</p>
+
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { renderNavbar } from '../assets/js/modules/layout.js';
+    import { initNavbar }  from '../assets/js/modules/navbar.js';
+    renderNavbar('../', 'discord');
+    initNavbar();
+  </script>
+
+</body>
+</html>

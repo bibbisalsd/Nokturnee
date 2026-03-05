@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forum — Nokturne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <style>
+    body { padding-top: var(--nav-height); }
+    .forum-page { display: flex; min-height: calc(100vh - var(--nav-height)); }
+
+    /* Sidebar */
+    .forum-sidebar {
+      width: 200px; flex-shrink: 0; background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      position: sticky; top: var(--nav-height);
+      height: calc(100vh - var(--nav-height)); overflow-y: auto; padding: 20px 0;
+    }
+    @media(max-width:900px){ .forum-sidebar { display:none; } }
+    .sidebar-section__label { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-faint); padding: 0 16px; margin-bottom: 6px; }
+    .sidebar-link { display: flex; align-items: center; justify-content: space-between; padding: 9px 16px; font-size: 12px; font-weight: 500; color: var(--text-dim); text-decoration: none; cursor: pointer; background: transparent; border: none; width: 100%; text-align: left; transition: all 0.15s; border-left: 2px solid transparent; }
+    .sidebar-link:hover { color: var(--text); background: var(--bg-elevated); }
+    .sidebar-link.active { color: var(--violet); background: var(--violet-faint); border-left-color: var(--violet); }
+    .sidebar-link__count { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); background: var(--bg-elevated); padding: 1px 6px; border: 1px solid var(--border); }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 10px 16px; }
+
+    /* Main */
+    .forum-main { flex: 1; padding: 24px 28px 60px; min-width: 0; }
+    .forum-topbar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; gap: 16px; flex-wrap: wrap; }
+    .forum-title { font-family: var(--font-display); font-size: 28px; letter-spacing: 0.1em; color: var(--text); line-height: 1; }
+    .forum-title span { color: var(--violet); }
+    .forum-subtitle { font-size: 12px; font-weight: 300; color: var(--text-faint); margin-top: 4px; }
+
+    /* Pinned bar */
+    .pinned-bar { background: var(--bg-surface); border: 1px solid var(--border-mid); clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); margin-bottom: 16px; overflow: hidden; }
+    .pinned-bar__hd { padding: 8px 14px; background: var(--violet-faint); border-bottom: 1px solid var(--violet-dim); font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--violet); display: flex; align-items: center; gap: 8px; }
+    .pinned-item { padding: 10px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; cursor: pointer; transition: background 0.15s; }
+    .pinned-item:last-child { border-bottom: none; }
+    .pinned-item:hover { background: var(--bg-elevated); }
+    .pinned-item__title { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+    .pinned-item__date { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); }
+
+    /* Post compose (admin/mod only) */
+    .compose-panel { background: var(--bg-surface); border: 1px solid var(--border-mid); clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); margin-bottom: 16px; overflow: hidden; display: none; }
+    .compose-panel.visible { display: block; }
+    .compose-panel__hd { padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--violet-faint); font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--violet); display: flex; justify-content: space-between; align-items: center; }
+    .compose-panel__body { padding: 16px; }
+    .form-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+    .form-input { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 13px; padding: 10px 14px; outline: none; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); transition: border-color 0.2s; box-sizing: border-box; }
+    .form-input:focus { border-color: var(--violet-dim); }
+    .form-textarea { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 13px; font-weight: 300; padding: 10px 14px; outline: none; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); transition: border-color 0.2s; box-sizing: border-box; min-height: 100px; resize: vertical; margin-bottom: 10px; }
+    .form-textarea:focus { border-color: var(--violet-dim); }
+    select.form-input { cursor: pointer; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; }
+    .btn-post { padding: 10px 28px; background: var(--violet); border: none; color: #fff; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%); transition: background 0.18s; }
+    .btn-post:hover { background: #7B18DF; }
+    .btn-post:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* Topic list */
+    .topic-row {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      cursor: pointer; transition: all 0.15s; margin-bottom: 2px; position: relative;
+    }
+    .topic-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: transparent; transition: background 0.15s; }
+    .topic-row:hover { background: var(--bg-elevated); border-color: var(--border-mid); }
+    .topic-row:hover::before { background: var(--violet); }
+    .topic-row.unread .topic-row__title { font-weight: 700; color: var(--text); }
+    .topic-row.pinned::before { background: var(--violet); }
+    .topic-row__icon { width: 36px; height: 36px; border-radius: 50%; background: var(--violet-faint); border: 1px solid var(--violet-dim); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--violet); flex-shrink: 0; }
+    .topic-row__info { flex: 1; min-width: 0; }
+    .topic-row__title { font-size: 13px; font-weight: 500; color: var(--text-dim); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topic-row__meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .topic-row__author { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+    .topic-row__category { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; padding: 2px 8px; border: 1px solid var(--border); color: var(--text-faint); clip-path: polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%); }
+    .flair-update  { color: var(--cyan);   border-color: var(--cyan-dim);   background: var(--cyan-faint); }
+    .flair-patch   { color: var(--violet); border-color: var(--violet-dim); background: var(--violet-faint); }
+    .flair-news    { color: #FFE600;       border-color: rgba(255,230,0,.35); background: rgba(255,230,0,.06); }
+    .flair-pinned  { color: #FF6B35;       border-color: rgba(255,107,53,.35); background: rgba(255,107,53,.06); }
+    .topic-row__stats { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+    .topic-row__replies { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+    .topic-row__date { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); }
+    .topic-row__views { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); }
+
+    /* Topic detail */
+    .topic-detail { display: none; }
+    .topic-detail.open { display: block; }
+    .topic-list.hidden { display: none; }
+    .back-link { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); background: none; border: none; cursor: pointer; padding: 0 0 20px; transition: color 0.15s; }
+    .back-link:hover { color: var(--violet); }
+
+    .post-card { background: var(--bg-surface); border: 1px solid var(--border); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); margin-bottom: 10px; overflow: hidden; }
+    .post-card__header { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px 10px; }
+    .post-card__avatar { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-mid); background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--violet); flex-shrink: 0; }
+    .post-card__meta { flex: 1; }
+    .post-card__username { font-size: 13px; font-weight: 700; color: var(--text); }
+    .post-card__role { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; padding: 1px 8px; border: 1px solid; margin-left: 8px; vertical-align: middle; }
+    .badge-admin { color: var(--cyan); border-color: var(--cyan-dim); background: var(--cyan-faint); }
+    .badge-mod   { color: #39FF80; border-color: rgba(57,255,128,.35); background: rgba(57,255,128,.06); }
+    .post-card__date { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); margin-top: 3px; letter-spacing: 0.1em; }
+    .post-card__body { padding: 0 18px 16px; font-size: 13px; font-weight: 300; color: var(--text-dim); line-height: 1.8; }
+    .post-card__body h1,.post-card__body h2,.post-card__body h3 { font-family: var(--font-body); color: var(--text); margin: 14px 0 6px; font-size: 15px; font-weight: 700; }
+    .post-card__body code { font-family: var(--font-mono); background: var(--bg-elevated); padding: 2px 6px; border: 1px solid var(--border); font-size: 11px; }
+    .post-card__body pre { background: var(--bg-elevated); border: 1px solid var(--border); padding: 12px; overflow-x: auto; margin: 10px 0; }
+    .post-card__body pre code { background: none; border: none; padding: 0; }
+    .post-card__body a { color: var(--violet); }
+    .post-card__body blockquote { border-left: 2px solid var(--violet-dim); padding-left: 12px; color: var(--text-faint); margin: 8px 0; }
+    .post-card__footer { padding: 8px 18px 14px; display: flex; align-items: center; gap: 14px; border-top: 1px solid var(--border); }
+    .reaction-btn { display: flex; align-items: center; gap: 4px; background: var(--bg-elevated); border: 1px solid var(--border); padding: 4px 10px; font-size: 13px; cursor: pointer; transition: all 0.15s; clip-path: polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%); }
+    .reaction-btn:hover { border-color: var(--border-mid); background: var(--bg-surface); }
+    .reaction-btn.active { border-color: var(--violet-dim); background: var(--violet-faint); }
+    .reaction-btn__count { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+
+    /* Reply form */
+    .reply-section { margin-top: 20px; }
+    .reply-section__title { font-family: var(--font-display); font-size: 16px; letter-spacing: 0.12em; color: var(--text); margin-bottom: 12px; }
+    .reply-card { background: var(--bg-surface); border: 1px solid var(--border); clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); margin-bottom: 8px; }
+    .reply-form { background: var(--bg-surface); border: 1px solid var(--border-mid); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); padding: 16px; margin-top: 16px; }
+    .reply-form__title { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 10px; }
+
+    /* Right panel (stats) */
+    .forum-right { width: 260px; flex-shrink: 0; padding: 24px 20px; border-left: 1px solid var(--border); }
+    @media(max-width:1200px){ .forum-right { display:none; } }
+    .stats-card { background: var(--bg-surface); border: 1px solid var(--border); clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); margin-bottom: 14px; overflow: hidden; }
+    .stats-card__hd { padding: 8px 14px; border-bottom: 1px solid var(--border); font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); background: var(--bg-elevated); }
+    .stats-card__body { padding: 12px 14px; }
+    .stat-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-key { color: var(--text-faint); font-weight: 300; }
+    .stat-val { font-family: var(--font-mono); font-size: 11px; color: var(--violet); }
+
+    .empty-state { text-align: center; padding: 60px 24px; }
+    .empty-state__text { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); }
+    .loading-state { text-align: center; padding: 40px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--violet); animation: pulse 1.2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:.4;} }
+    .toast { position: fixed; bottom: 24px; right: 24px; z-index: 400; padding: 12px 20px; background: var(--bg-elevated); border: 1px solid var(--violet-dim); clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--violet); display: none; }
+    .toast.show { display: block; }
+    .toast.err { color: var(--red-alert); border-color: var(--red-alert); }
+    .members-only-msg { background: var(--violet-faint); border: 1px solid var(--violet-dim); clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); padding: 14px 18px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--text-dim); margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"></div>
+  <div class="forum-page">
+    <aside class="forum-sidebar">
+      <div style="padding:16px 16px 8px;">
+        <div class="sidebar-section__label">Channels</div>
+      </div>
+      <button class="sidebar-link active" data-cat="all">All Posts <span class="sidebar-link__count" id="countAll">0</span></button>
+      <button class="sidebar-link" data-cat="updates">Updates <span class="sidebar-link__count" id="countUpdates">0</span></button>
+      <button class="sidebar-link" data-cat="announcements">Announcements <span class="sidebar-link__count" id="countAnnouncements">0</span></button>
+      <button class="sidebar-link" data-cat="patch-notes">Patch Notes <span class="sidebar-link__count" id="countPatch">0</span></button>
+      <button class="sidebar-link" data-cat="support">Support <span class="sidebar-link__count" id="countSupport">0</span></button>
+      <div class="sidebar-divider"></div>
+      <div style="padding:0 16px;"><div class="sidebar-section__label">Sort</div></div>
+      <button class="sidebar-link" data-sort="new">↓ Newest</button>
+      <button class="sidebar-link" data-sort="top">↑ Most Views</button>
+    </aside>
+
+    <main class="forum-main">
+      <div class="forum-topbar">
+        <div>
+          <div class="forum-title">NOKTURNE <span>FORUM</span></div>
+          <div class="forum-subtitle">Updates and announcements from the team</div>
+        </div>
+        <div id="adminComposeWrap" style="display:none;">
+          <button class="btn-post" id="composeBtn">+ New Post</button>
+        </div>
+      </div>
+
+      <!-- Compose (admin only) -->
+      <div class="compose-panel" id="composePanel">
+        <div class="compose-panel__hd">
+          <span>New Post</span>
+          <button style="background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:16px;" id="closeComposeBtn">✕</button>
+        </div>
+        <div class="compose-panel__body">
+          <div class="form-row">
+            <input class="form-input" id="postTitle" placeholder="Post title..." style="flex:3;" />
+            <select class="form-input" id="postCategory" style="max-width:160px;">
+              <option value="updates">Updates</option>
+              <option value="announcements">Announcements</option>
+              <option value="patch-notes">Patch Notes</option>
+              <option value="support">Support</option>
+            </select>
+            <select class="form-input" id="postFlair" style="max-width:120px;">
+              <option value="">No flair</option>
+              <option value="update">Update</option>
+              <option value="patch">Patch</option>
+              <option value="news">News</option>
+              <option value="pinned">Pinned</option>
+            </select>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;color:var(--text-faint);margin-bottom:6px;">Markdown supported: **bold** *italic* `code` # heading > quote</div>
+          <textarea class="form-textarea" id="postBody" placeholder="Write post content..."></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <label style="display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:10px;color:var(--text-faint);cursor:pointer;">
+              <input type="checkbox" id="postPinned" style="accent-color:var(--violet);" /> Pin this post
+            </label>
+            <button class="btn-post" id="submitPostBtn">Publish Post</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Members only notice -->
+      <div class="members-only-msg" id="membersNotice" style="display:none;">
+        ◈ This forum is for verified Nokturne members. Read-only access is granted to all logged-in users.
+      </div>
+
+      <!-- Topic list -->
+      <div class="topic-list" id="topicList">
+        <div class="loading-state">Loading posts...</div>
+      </div>
+
+      <!-- Topic detail -->
+      <div class="topic-detail" id="topicDetail">
+        <button class="back-link" id="backBtn">← Back to forum</button>
+        <div id="topicContent"></div>
+      </div>
+    </main>
+
+    <aside class="forum-right">
+      <div class="stats-card">
+        <div class="stats-card__hd">Forum Stats</div>
+        <div class="stats-card__body">
+          <div class="stat-row"><span class="stat-key">Posts</span><span class="stat-val" id="statPosts">—</span></div>
+          <div class="stat-row"><span class="stat-key">Build</span><span class="stat-val">v3.2.1</span></div>
+          <div class="stat-row"><span class="stat-key">Status</span><span class="stat-val" style="color:#39FF80;">Online</span></div>
+        </div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-card__hd">Pinned</div>
+        <div class="stats-card__body" id="pinnedList" style="padding:0;"></div>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    import { renderNavbar, renderFooter } from '../assets/js/modules/layout.js';
+    import { initNavbar } from '../assets/js/modules/navbar.js';
+    import { marked } from 'https://cdn.jsdelivr.net/npm/marked@9.1.6/+esm';
+
+    const SUPABASE_URL = 'https://mmovqnaeozhzzeazrgdm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_CPoq9v6zAGVfRH4scFbxcA_gMRX4FJs';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    renderNavbar('../', 'forum');
+    renderFooter('../');
+    initNavbar();
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; }
+    const userId = session.user.id;
+    const username = session.user.user_metadata?.full_name || session.user.user_metadata?.user_name || 'Unknown';
+
+    let allPosts = [], currentCat = 'all', currentSort = 'new', isAdmin = false, isMod = false;
+
+    const { data: roleData } = await supabase.from('user_roles').select('role').eq('user_id', userId).single();
+    const role = roleData?.role || 'guest';
+    isAdmin = role === 'admin';
+    isMod = role === 'moderator';
+
+    if (isAdmin || isMod) {
+      document.getElementById('adminComposeWrap').style.display = 'block';
+    } else {
+      document.getElementById('membersNotice').style.display = 'block';
+    }
+
+    // Compose
+    document.getElementById('composeBtn')?.addEventListener('click', () => document.getElementById('composePanel').classList.toggle('visible'));
+    document.getElementById('closeComposeBtn')?.addEventListener('click', () => document.getElementById('composePanel').classList.remove('visible'));
+    document.getElementById('submitPostBtn')?.addEventListener('click', submitPost);
+
+    async function submitPost() {
+      const title = document.getElementById('postTitle').value.trim();
+      const body = document.getElementById('postBody').value.trim();
+      const category = document.getElementById('postCategory').value;
+      const flair = document.getElementById('postFlair').value;
+      const pinned = document.getElementById('postPinned').checked;
+      const btn = document.getElementById('submitPostBtn');
+      if (!title || !body) { showToast('Title and body required', true); return; }
+      btn.disabled = true; btn.textContent = 'Publishing...';
+      const { error } = await supabase.from('forum_posts').insert({ user_id: userId, username, title, body, category, flair, is_pinned: pinned, upvotes: 0, view_count: 0 });
+      btn.disabled = false; btn.textContent = 'Publish Post';
+      if (error) { showToast('Failed: ' + error.message, true); return; }
+      document.getElementById('postTitle').value = '';
+      document.getElementById('postBody').value = '';
+      document.getElementById('postPinned').checked = false;
+      document.getElementById('composePanel').classList.remove('visible');
+      showToast('Post published!');
+      loadPosts();
+    }
+
+    async function loadPosts() {
+      const { data } = await supabase.from('forum_posts').select('*').order('created_at', { ascending: false });
+      allPosts = data || [];
+      document.getElementById('statPosts').textContent = allPosts.length;
+
+      // Counts
+      const cats = ['updates','announcements','patch-notes','support'];
+      document.getElementById('countAll').textContent = allPosts.length;
+      cats.forEach(c => {
+        const el = document.getElementById('count' + c.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(''));
+        if (el) el.textContent = allPosts.filter(p => p.category === c).length;
+      });
+
+      // Pinned in sidebar
+      const pinned = allPosts.filter(p => p.is_pinned).slice(0,4);
+      document.getElementById('pinnedList').innerHTML = pinned.length
+        ? pinned.map(p => `<div class="pinned-item" data-id="${p.id}"><span class="pinned-item__title">${esc(p.title)}</span><span class="pinned-item__date">${timeAgo(p.created_at)}</span></div>`).join('')
+        : '<div style="padding:12px 14px;font-family:var(--font-mono);font-size:10px;color:var(--text-faint);">No pinned posts</div>';
+      document.querySelectorAll('.pinned-item').forEach(el => el.addEventListener('click', () => openTopic(el.dataset.id)));
+
+      renderList();
+    }
+
+    function getFiltered() {
+      let list = currentCat === 'all' ? allPosts : allPosts.filter(p => p.category === currentCat);
+      if (currentSort === 'top') list = [...list].sort((a,b) => (b.view_count||0)-(a.view_count||0));
+      else list = [...list].sort((a,b) => new Date(b.created_at)-new Date(a.created_at));
+      // Pinned always on top
+      return [...list.filter(p=>p.is_pinned), ...list.filter(p=>!p.is_pinned)];
+    }
+
+    function renderList() {
+      const list = getFiltered();
+      const container = document.getElementById('topicList');
+      if (!list.length) { container.innerHTML = '<div class="empty-state"><div class="empty-state__text">No posts yet</div></div>'; return; }
+      container.innerHTML = list.map(p => {
+        const flair = p.flair ? `<span class="topic-row__category flair-${p.flair}">${p.flair}</span>` : '';
+        const catBadge = `<span class="topic-row__category">${p.category||'general'}</span>`;
+        const isPinned = p.is_pinned ? ' pinned' : '';
+        return `<div class="topic-row${isPinned}" data-id="${p.id}">
+          <div class="topic-row__icon">◈</div>
+          <div class="topic-row__info">
+            <div class="topic-row__title">${esc(p.title)}</div>
+            <div class="topic-row__meta">
+              <span class="topic-row__author">${esc(p.username)}</span>
+              ${catBadge}
+              ${flair}
+              <span class="topic-row__date">${timeAgo(p.created_at)}</span>
+            </div>
+          </div>
+          <div class="topic-row__stats">
+            <span class="topic-row__replies">💬 ${p.reply_count||0}</span>
+            <span class="topic-row__views">👁 ${p.view_count||0}</span>
+          </div>
+        </div>`;
+      }).join('');
+      container.querySelectorAll('.topic-row').forEach(row => row.addEventListener('click', () => openTopic(row.dataset.id)));
+    }
+
+    async function openTopic(postId) {
+      const p = allPosts.find(x => String(x.id) === String(postId));
+      if (!p) return;
+      document.getElementById('topicList').classList.add('hidden');
+      document.getElementById('topicDetail').classList.add('open');
+
+      // Increment view count
+      await supabase.from('forum_posts').update({ view_count: (p.view_count||0)+1 }).eq('id', p.id);
+
+      const roleBadge = isAdmin ? `<span class="post-card__role badge-admin">Admin</span>` : isMod ? `<span class="post-card__role badge-mod">Mod</span>` : '';
+
+      document.getElementById('topicContent').innerHTML = `
+        <div class="post-card">
+          <div class="post-card__header">
+            <div class="post-card__avatar">◈</div>
+            <div class="post-card__meta">
+              <div class="post-card__username">${esc(p.username)}${p.is_admin?'<span class="post-card__role badge-admin">Admin</span>':''}</div>
+              <div class="post-card__date">${new Date(p.created_at).toLocaleString()} ${p.flair?`<span class="topic-row__category flair-${p.flair}" style="margin-left:8px;">${p.flair}</span>`:''}</div>
+            </div>
+            ${(isAdmin||isMod)?`<button class="reaction-btn" id="deletePostBtn" style="margin-left:auto;color:var(--red-alert);border-color:rgba(255,34,80,.3);">✕ Delete</button>`:''}
+          </div>
+          <div style="padding:0 18px 6px;font-family:var(--font-display);font-size:26px;letter-spacing:0.06em;color:var(--text);">${esc(p.title)}</div>
+          <div class="post-card__body" id="topicBody"></div>
+          <div class="post-card__footer" id="topicReactions"></div>
+        </div>
+        <div class="reply-section" id="replySection"></div>`;
+
+      document.getElementById('topicBody').innerHTML = marked.parse(p.body||'');
+
+      if (isAdmin||isMod) {
+        document.getElementById('deletePostBtn')?.addEventListener('click', async () => {
+          if (!confirm('Delete this post?')) return;
+          await supabase.from('forum_posts').delete().eq('id', p.id);
+          showToast('Post deleted');
+          document.getElementById('backBtn').click();
+          loadPosts();
+        });
+      }
+
+      loadReplies(p.id);
+    }
+
+    async function loadReplies(postId) {
+      const { data: replies } = await supabase.from('forum_comments').select('*').eq('post_id', postId).order('created_at', { ascending: true });
+      const section = document.getElementById('replySection');
+      if (!section) return;
+
+      const replyHtml = replies && replies.length ? replies.map(r => `
+        <div class="reply-card">
+          <div class="post-card__header">
+            <div class="post-card__avatar" style="width:32px;height:32px;font-size:12px;">◈</div>
+            <div class="post-card__meta">
+              <div class="post-card__username" style="font-size:12px;">${esc(r.username)}</div>
+              <div class="post-card__date">${new Date(r.created_at).toLocaleString()}</div>
+            </div>
+          </div>
+          <div class="post-card__body" style="padding-top:0;">${esc(r.body)}</div>
+        </div>`).join('') : '';
+
+      section.innerHTML = `
+        <div style="font-family:var(--font-display);font-size:16px;letter-spacing:0.12em;color:var(--text);margin-bottom:14px;">${(replies||[]).length} REPLIES</div>
+        ${replyHtml}
+        <div class="reply-form">
+          <div class="reply-form__title">Post a Reply</div>
+          <textarea class="form-textarea" id="replyBody" placeholder="Write your reply... (Members only)" ${isAdmin||isMod?'':''}></textarea>
+          <button class="btn-post" id="submitReplyBtn">Reply</button>
+        </div>`;
+
+      document.getElementById('submitReplyBtn').addEventListener('click', async () => {
+        const body = document.getElementById('replyBody').value.trim();
+        if (!body) return;
+        const btn = document.getElementById('submitReplyBtn');
+        btn.disabled = true; btn.textContent = 'Posting...';
+        const { error } = await supabase.from('forum_comments').insert({ post_id: postId, user_id: userId, username, body });
+        btn.disabled = false; btn.textContent = 'Reply';
+        if (error) { showToast('Failed: ' + error.message, true); return; }
+        document.getElementById('replyBody').value = '';
+        await supabase.from('forum_posts').update({ reply_count: (replies||[]).length + 1 }).eq('id', postId);
+        showToast('Reply posted');
+        loadReplies(postId);
+      });
+    }
+
+    document.getElementById('backBtn').addEventListener('click', () => {
+      document.getElementById('topicDetail').classList.remove('open');
+      document.getElementById('topicList').classList.remove('hidden');
+    });
+
+    // Sidebar filters
+    document.querySelectorAll('[data-cat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active'); currentCat = btn.dataset.cat; renderList();
+      });
+    });
+    document.querySelectorAll('[data-sort]').forEach(btn => {
+      btn.addEventListener('click', () => { currentSort = btn.dataset.sort; renderList(); });
+    });
+
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function timeAgo(ts) {
+      const s = Math.floor((Date.now()-new Date(ts))/1000);
+      if (s<60) return s+'s ago'; if (s<3600) return Math.floor(s/60)+'m ago';
+      if (s<86400) return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago';
+    }
+    function showToast(msg, err=false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = 'toast show'+(err?' err':'');
+      setTimeout(()=>t.classList.remove('show'),3000);
+    }
+
+    loadPosts();
+  </script>
+</body>
+</html>

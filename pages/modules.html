@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modules — Nokturne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <style>
+    .modules-section-label {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      margin-top: 56px;
+    }
+    .modules-section-label:first-of-type { margin-top: 0; }
+    .modules-section-label__text {
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .modules-section-label__line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border-mid), transparent);
+    }
+    .modules-section-label__badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--violet);
+      border: 1px solid var(--violet-dim);
+      padding: 3px 10px;
+      clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+      white-space: nowrap;
+    }
+    .modules-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+      margin-bottom: 4px;
+    }
+    .modules-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    }
+    @media (max-width: 900px) { .modules-grid-4 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 900px) { .modules-grid-3 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .modules-grid-4, .modules-grid-3 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="hero__lines" aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
+
+  <div class="page-banner">
+    <div class="page-banner__bg" aria-hidden="true"></div>
+    <div class="container page-banner__inner">
+      <div class="t-label"><span class="t-label-line"></span>Module Library</div>
+      <h1 class="t-heading">BOTS &amp; <span class="accent-cyan">VISUALS</span></h1>
+      <p class="t-body">Four precision bots and a suite of visual overlays — all operating independently or together via the plugin bus.</p>
+    </div>
+  </div>
+
+  <main class="section">
+    <div class="container">
+
+      <!-- BOTS -->
+      <div class="modules-section-label reveal">
+        <span class="modules-section-label__text">BOTS</span>
+        <span class="modules-section-label__line"></span>
+        <span class="modules-section-label__badge">4 Modules</span>
+      </div>
+
+      <div class="modules-grid-4 reveal" data-delay="0.06">
+
+        <div class="mod-card">
+          <div class="mod-card__num" aria-hidden="true">A</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">BOT-A</div>
+            <span class="badge badge-cyan">Active</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Core</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Lorem ipsum dolor sit amet</li>
+            <li>Consectetur adipiscing elit</li>
+            <li>Sed do eiusmod tempor</li>
+            <li>Incididunt ut labore</li>
+          </ul>
+        </div>
+
+        <div class="mod-card">
+          <div class="mod-card__num" aria-hidden="true">B</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">BOT-B</div>
+            <span class="badge badge-cyan">Active</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Core</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Lorem ipsum dolor sit amet</li>
+            <li>Consectetur adipiscing elit</li>
+            <li>Sed do eiusmod tempor</li>
+            <li>Incididunt ut labore</li>
+          </ul>
+        </div>
+
+        <div class="mod-card">
+          <div class="mod-card__num" aria-hidden="true">C</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">BOT-C</div>
+            <span class="badge badge-violet">Secure</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Core</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Lorem ipsum dolor sit amet</li>
+            <li>Consectetur adipiscing elit</li>
+            <li>Sed do eiusmod tempor</li>
+            <li>Incididunt ut labore</li>
+          </ul>
+        </div>
+
+        <div class="mod-card">
+          <div class="mod-card__num" aria-hidden="true">D</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">BOT-D</div>
+            <span class="badge badge-cyan">Ready</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Core</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Lorem ipsum dolor sit amet</li>
+            <li>Consectetur adipiscing elit</li>
+            <li>Sed do eiusmod tempor</li>
+            <li>Incididunt ut labore</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- VISUALS -->
+      <div class="modules-section-label reveal" data-delay="0.04">
+        <span class="modules-section-label__text">VISUALS</span>
+        <span class="modules-section-label__line"></span>
+        <span class="modules-section-label__badge">3 Modules</span>
+      </div>
+
+      <div class="modules-grid-3 reveal" data-delay="0.08">
+
+        <div class="mod-card">
+          <div class="mod-card__num" aria-hidden="true">V1</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">BOOST TIMER</div>
+            <span class="badge badge-cyan">Active</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Overlay</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Tracks large boost pad respawn</li>
+            <li>On-screen countdown timer</li>
+            <li>Pad location awareness</li>
+            <li>Customisable overlay position</li>
+          </ul>
+        </div>
+
+        <div class="mod-card">
+          <div class="mod-card__num" aria-hidden="true">V2</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">CAMERA FOV</div>
+            <span class="badge badge-cyan">Active</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Overlay</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Real-time FOV adjustment</li>
+            <li>Dynamic field-of-view overlay</li>
+            <li>Preset slot system</li>
+            <li>Per-situation profiles</li>
+          </ul>
+        </div>
+
+        <div class="mod-card">
+          <div class="mod-card__num" aria-hidden="true">V3</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">CAR HITBOX</div>
+            <span class="badge badge-violet">Rendering</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Overlay</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Hitbox wireframe rendering</li>
+            <li>Enemy and ally outlines</li>
+            <li>Collision boundary display</li>
+            <li>Adjustable opacity and colour</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module">
+    import { renderNavbar, renderFooter } from '../assets/js/modules/layout.js';
+    import { initNavbar }  from '../assets/js/modules/navbar.js';
+    import { initReveal }  from '../assets/js/modules/reveal.js';
+
+    renderNavbar('../', 'modules');
+    renderFooter('../');
+    initNavbar();
+    initReveal();
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

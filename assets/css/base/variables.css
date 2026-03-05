@@ -1,0 +1,96 @@
+/* ============================================================
+   NOKTURNE — Design Tokens & CSS Custom Properties
+   ============================================================ */
+
+:root {
+  /* ── Brand Colors ── */
+  --violet:        #9B30FF;
+  --violet-dim:    rgba(155, 48, 255, 0.45);
+  --violet-faint:  rgba(155, 48, 255, 0.10);
+  --violet-glow:   rgba(155, 48, 255, 0.20);
+
+  --cyan:          #00F0FF;
+  --cyan-dim:      rgba(0, 240, 255, 0.40);
+  --cyan-faint:    rgba(0, 240, 255, 0.08);
+  --cyan-glow:     rgba(0, 240, 255, 0.18);
+
+  --yellow:        #FFE600;
+  --yellow-dim:    rgba(255, 230, 0, 0.40);
+  --yellow-faint:  rgba(255, 230, 0, 0.08);
+
+  --red-alert:     #FF2250;
+
+  /* ── Neutral Palette ── */
+  --bg:            #080810;
+  --bg-surface:    #0E0E18;
+  --bg-elevated:   #141420;
+  --bg-overlay:    rgba(8, 8, 16, 0.92);
+
+  --border:        rgba(255, 255, 255, 0.06);
+  --border-mid:    rgba(255, 255, 255, 0.10);
+  --border-bright: rgba(255, 255, 255, 0.18);
+
+  --text:          #F2F2F8;
+  --text-dim:      rgba(242, 242, 248, 0.52);
+  --text-faint:    rgba(242, 242, 248, 0.22);
+  --text-ghost:    rgba(242, 242, 248, 0.08);
+
+  /* ── Typography ── */
+  --font-display: "Bebas Neue", Impact, sans-serif;
+  --font-body:    "Barlow", system-ui, sans-serif;
+  --font-mono:    "Fira Code", "Cascadia Code", monospace;
+
+  /* ── Sizing Scale ── */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  40px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+
+  /* ── Radii ── */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* ── Transitions ── */
+  --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in:   cubic-bezier(0.64, 0, 0.78, 0);
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast:  160ms;
+  --dur-base:  260ms;
+  --dur-slow:  440ms;
+
+  /* ── Shadows & Glows ── */
+  --shadow-card:   0 4px 32px rgba(0,0,0,0.6), 0 1px 0 var(--border);
+  --glow-violet:   0 0 40px var(--violet-glow), 0 0 80px rgba(155,48,255,0.08);
+  --glow-cyan:     0 0 40px var(--cyan-glow),   0 0 80px rgba(0,240,255,0.06);
+
+  /* ── Z-Index Scale ── */
+  --z-below:   -1;
+  --z-base:     0;
+  --z-float:   10;
+  --z-sticky:  50;
+  --z-nav:    100;
+  --z-modal:  200;
+  --z-toast:  300;
+
+  /* ── Layout ── */
+  --max-width:       1280px;
+  --nav-height:      60px;
+  --section-pad-v:   96px;
+  --section-pad-h:   48px;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --section-pad-v: 64px;
+    --section-pad-h: 24px;
+  }
+}
+@media (max-width: 600px) {
+  :root {
+    --section-pad-v: 48px;
+    --section-pad-h: 16px;
+  }
+}

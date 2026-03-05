@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help — Nokturne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+</head>
+<body>
+
+  <div class="hero__lines" aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
+
+  <!-- PAGE BANNER -->
+  <div class="page-banner">
+    <div class="page-banner__bg" aria-hidden="true"></div>
+    <div class="container page-banner__inner">
+      <div class="t-label"><span class="t-label-line"></span>Help Center</div>
+      <h1 class="t-heading">QUICK <span class="accent-violet">ANSWERS</span></h1>
+      <p class="t-body">Common questions answered. For direct support, reach out via the <a href="contact.html" style="color:var(--violet);">Contact page</a>.</p>
+    </div>
+  </div>
+
+  <main class="section">
+    <div class="container">
+
+      <div class="faq-layout">
+
+        <!-- Left: status panel -->
+        <div class="reveal">
+          <div class="data-panel clip-panel">
+            <div class="data-panel__header">
+              <span>System Status</span>
+              <span class="data-panel__dot"></span>
+            </div>
+            <div class="data-panel__body">
+              <div class="feature-row" style="padding-top:0;">
+                <div class="feature-row__icon">SRV</div>
+                <div class="feature-row__info">
+                  <div class="feature-row__name">Auth Server</div>
+                  <div class="feature-row__desc">All systems operational</div>
+                </div>
+                <span class="feature-row__check" style="color:var(--cyan);">●</span>
+              </div>
+              <div class="feature-row">
+                <div class="feature-row__icon">UPD</div>
+                <div class="feature-row__info">
+                  <div class="feature-row__name">Update Channel</div>
+                  <div class="feature-row__desc">v3.2.1 — current</div>
+                </div>
+                <span class="feature-row__check" style="color:var(--cyan);">●</span>
+              </div>
+              <div class="feature-row">
+                <div class="feature-row__icon">DSC</div>
+                <div class="feature-row__info">
+                  <div class="feature-row__name">Discord Support</div>
+                  <div class="feature-row__desc">Active — response within 2h</div>
+                </div>
+                <span class="feature-row__check" style="color:var(--cyan);">●</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="data-panel clip-card" style="padding:24px;margin-top:16px;">
+            <div class="t-mono t-mono-violet" style="margin-bottom:8px;">Still need help?</div>
+            <p class="t-body-sm" style="margin-bottom:16px;">
+              For questions not covered here, DM directly on Discord for 1-on-1 support.
+            </p>
+            <a href="contact.html" class="btn btn-outline" style="font-size:10px;padding:10px 20px;">Go to Contact ↗</a>
+          </div>
+        </div>
+
+        <!-- Right: FAQ accordion -->
+        <div class="faq-list reveal" data-delay="0.08">
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span>What is Nokturne?</span>
+              <span class="faq-btn__arrow">▸</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer__inner">
+                A private, modular bot framework for Rocket League. It provides a structured
+                environment for building and running high-performance bots with mechanical
+                dominance — built around low-latency physics prediction and a clean plugin API.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span>How is Nokturne different from others?</span>
+              <span class="faq-btn__arrow">▸</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer__inner">
+                Built for precision and speed. Every build is HWID-locked, distribution is
+                strictly limited, and the architecture prioritises low-latency physics prediction
+                over feature bloat. No shared builds, no public repos, no resellers.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span>Is my access secure?</span>
+              <span class="faq-btn__arrow">▸</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer__inner">
+                Yes. Each binary is individually compiled and bound to your hardware ID.
+                There are no shared download links, no public repositories, and no
+                third-party distribution. Your build is unique to your machine.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span>What happens when Rocket League updates?</span>
+              <span class="faq-btn__arrow">▸</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer__inner">
+                Compatibility is maintained within 48 hours of game patches. Updates are
+                pushed silently through controlled channels — you'll receive a notification
+                in your private Discord channel when your build is refreshed.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span>How do I get access?</span>
+              <span class="faq-btn__arrow">▸</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer__inner">
+                DM <strong style="color:var(--violet);">@bxserkk</strong> on Discord.
+                Pricing and onboarding details are handled directly. There is no public
+                checkout — slots are controlled and limited at all times.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span>Can I use the plugin API?</span>
+              <span class="faq-btn__arrow">▸</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer__inner">
+                Yes. The plugin API supports coroutine-safe modules and hot-reload during
+                runtime. Full documentation and API reference are provided with your access.
+                Custom plugins can be shared privately within the Nokturne community.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-btn" aria-expanded="false">
+              <span>Can I transfer my license to a new PC?</span>
+              <span class="faq-btn__arrow">▸</span>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer__inner">
+                Yes, HWID transfers are supported. Contact <strong style="color:var(--violet);">@bxserkk</strong> on
+                Discord with your request. Transfers are processed within 24 hours and are
+                limited to prevent abuse.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { renderNavbar, renderFooter } from '../assets/js/modules/layout.js';
+    import { initNavbar } from '../assets/js/modules/navbar.js';
+    import { initReveal } from '../assets/js/modules/reveal.js';
+    import { initFaq }    from '../assets/js/modules/faq.js';
+
+    renderNavbar('../', 'help');
+    renderFooter('../');
+    initNavbar();
+    initReveal();
+    initFaq();
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
