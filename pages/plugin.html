@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plugin — Nokturne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <style>
+    body { padding-top: var(--nav-height); background: var(--bg); }
+    .plugin-wrap { max-width: 1100px; margin: 0 auto; padding: 28px 24px 80px; }
+    .back-link { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); text-decoration: none; transition: color 0.15s; margin-bottom: 24px; }
+    .back-link:hover { color: var(--violet); }
+
+    /* Two column layout */
+    .plugin-layout { display: grid; grid-template-columns: 1fr 280px; gap: 28px; align-items: start; }
+    @media(max-width: 860px) { .plugin-layout { grid-template-columns: 1fr; } }
+
+    /* Left column */
+    .plugin-header { margin-bottom: 20px; }
+    .plugin-type-tag { display: inline-block; font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; padding: 3px 10px; border: 1px solid var(--violet-dim); color: var(--violet); background: var(--violet-faint); clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%); margin-bottom: 12px; }
+    .plugin-title { font-family: var(--font-display); font-size: 36px; letter-spacing: 0.06em; color: var(--text); line-height: 1.05; margin-bottom: 10px; }
+    .plugin-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .plugin-author { display: flex; align-items: center; gap: 8px; }
+    .plugin-author__av { width: 28px; height: 28px; border-radius: 50%; background: var(--violet-faint); border: 1px solid var(--violet-dim); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--violet); flex-shrink: 0; }
+    .plugin-author__name { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); cursor: pointer; }
+    .plugin-author__name:hover { color: var(--violet); }
+    .plugin-stat { display: flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+    .plugin-stat__val { color: var(--text-dim); }
+    .stars-row { display: flex; gap: 2px; }
+    .star { font-size: 12px; color: var(--text-faint); }
+    .star.filled { color: #FFD700; }
+
+    /* Description */
+    .desc-panel { background: var(--bg-surface); border: 1px solid var(--border); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); margin-bottom: 20px; overflow: hidden; }
+    .panel-hd { padding: 10px 16px; border-bottom: 1px solid var(--border); font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); background: var(--bg-elevated); }
+    .panel-body { padding: 18px 20px; font-size: 13px; font-weight: 300; color: var(--text-dim); line-height: 1.8; }
+    .panel-body h1,.panel-body h2,.panel-body h3 { color: var(--text); font-size: 15px; font-weight: 700; margin: 12px 0 6px; }
+    .panel-body code { font-family: var(--font-mono); background: var(--bg-elevated); padding: 2px 6px; border: 1px solid var(--border); font-size: 11px; }
+    .panel-body pre { background: var(--bg-elevated); border: 1px solid var(--border); padding: 12px; overflow-x: auto; margin: 10px 0; }
+    .panel-body a { color: var(--violet); }
+    .panel-body blockquote { border-left: 2px solid var(--violet-dim); padding-left: 12px; color: var(--text-faint); margin: 8px 0; }
+
+    /* Tags */
+    .tags-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 20px; border-top: 1px solid var(--border); }
+    .tag-chip { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; padding: 3px 10px; border: 1px solid var(--border); color: var(--text-faint); clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%); }
+    .tag-chip.nokturne { color: var(--violet); border-color: var(--violet-dim); background: var(--violet-faint); }
+
+    /* Screenshots */
+    .screenshots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .screenshot { width: 100%; border: 1px solid var(--border); cursor: pointer; transition: border-color 0.15s; }
+    .screenshot:hover { border-color: var(--border-mid); }
+
+    /* Reviews */
+    .review-card { background: var(--bg-surface); border: 1px solid var(--border); clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); padding: 14px 16px; margin-bottom: 8px; }
+    .review-card__hd { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+    .review-card__user { font-size: 13px; font-weight: 600; color: var(--text); }
+    .review-card__body { font-size: 12px; font-weight: 300; color: var(--text-dim); line-height: 1.7; }
+    .review-card__date { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); margin-left: auto; }
+    .review-reply { margin-top: 10px; padding: 10px 14px; background: var(--bg-elevated); border-left: 2px solid var(--violet-dim); }
+    .review-reply__label { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--violet); margin-bottom: 4px; }
+    .review-reply__text { font-size: 12px; color: var(--text-dim); }
+    .star-sel { display: flex; gap: 6px; margin-bottom: 12px; }
+    .star-sel__btn { font-size: 20px; color: var(--text-faint); cursor: pointer; transition: color 0.15s; background: none; border: none; line-height: 1; }
+    .star-sel__btn.sel { color: #FFD700; }
+
+    /* Right column */
+    .price-card { background: var(--bg-surface); border: 1px solid var(--border-mid); clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); overflow: hidden; margin-bottom: 16px; }
+    .price-card__hd { padding: 12px 18px; background: linear-gradient(135deg, var(--violet-faint), transparent); border-bottom: 1px solid var(--border); }
+    .price-card__price { font-family: var(--font-display); font-size: 48px; letter-spacing: 0.06em; color: var(--violet); line-height: 1; }
+    .price-card__price.free { color: #39FF80; }
+    .price-card__unit { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-faint); }
+    .price-card__body { padding: 16px 18px; }
+    .buy-btn { width: 100%; padding: 14px; background: var(--violet); border: none; color: #fff; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); transition: background 0.18s; margin-bottom: 10px; }
+    .buy-btn:hover { background: #7B18DF; }
+    .buy-btn.owned { background: #1a4a2a; border: 1px solid #39FF80; color: #39FF80; }
+    .buy-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .buy-btn.free-btn { background: rgba(57,255,128,.12); border: 1px solid rgba(57,255,128,.4); color: #39FF80; }
+    .buy-btn.free-btn:hover { background: rgba(57,255,128,.2); }
+    .price-card__bal { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); text-align: center; margin-top: 6px; }
+
+    /* Changelog */
+    .changelog-entry { background: var(--bg-elevated); border: 1px solid var(--border); clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); padding: 12px 14px; margin-bottom: 8px; }
+    .changelog-entry__ver { font-family: var(--font-display); font-size: 16px; letter-spacing: 0.1em; color: var(--violet); line-height: 1; margin-bottom: 3px; }
+    .changelog-entry__date { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); margin-bottom: 6px; }
+    .changelog-entry__notes { font-size: 12px; font-weight: 300; color: var(--text-dim); line-height: 1.65; white-space: pre-wrap; }
+
+    /* Utils */
+    .form-textarea { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 12px; padding: 9px 12px; outline: none; box-sizing: border-box; min-height: 80px; resize: vertical; transition: border-color 0.2s; }
+    .form-textarea:focus { border-color: var(--violet-dim); }
+    .form-input { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 12px; padding: 9px 12px; outline: none; box-sizing: border-box; transition: border-color 0.2s; }
+    .form-input:focus { border-color: var(--violet-dim); }
+    .btn-sm { padding: 8px 20px; background: var(--violet); border: none; color: #fff; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); transition: background 0.18s; }
+    .btn-sm:hover { background: #7B18DF; }
+    .btn-sm:disabled { opacity: .5; cursor: not-allowed; }
+    .loading-spin { text-align: center; padding: 60px 20px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--violet); animation: pulse 1.2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:.4;} }
+    .toast { position: fixed; bottom: 24px; right: 24px; z-index: 9999; padding: 12px 20px; background: var(--bg-elevated); border: 1px solid var(--violet-dim); clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--violet); display: none; }
+    .toast.show { display: block; }
+    .toast.err { color: var(--red-alert); border-color: var(--red-alert); }
+    .version-badge { display: inline-block; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em; padding: 2px 8px; border: 1px solid var(--border); color: var(--text-faint); clip-path: polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%); }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"></div>
+  <div class="plugin-wrap">
+    <a class="back-link" href="forum.html?tab=market">← Back to Market</a>
+    <div id="loading" class="loading-spin">Loading...</div>
+    <div id="pluginContent" style="display:none;"></div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    import { renderNavbar, renderFooter } from '../assets/js/modules/layout.js';
+    import { initNavbar } from '../assets/js/modules/navbar.js';
+    import { marked } from 'https://cdn.jsdelivr.net/npm/marked@9.1.6/+esm';
+
+    const SUPABASE_URL = 'https://mmovqnaeozhzzeazrgdm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_CPoq9v6zAGVfRH4scFbxcA_gMRX4FJs';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    renderNavbar('../', 'forum');
+    renderFooter('../');
+    initNavbar();
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; }
+    const userId  = session.user.id;
+    const username = session.user.user_metadata?.full_name || session.user.user_metadata?.user_name || 'Unknown';
+
+    const pluginId = new URLSearchParams(window.location.search).get('id');
+    if (!pluginId) { window.location.href = 'forum.html?tab=market'; }
+
+    const [roleRes, walletRes, pluginRes, purchRes, changelogRes] = await Promise.all([
+      supabase.from('user_roles').select('role').eq('user_id', userId).single(),
+      supabase.from('wallets').select('balance').eq('user_id', userId).single(),
+      supabase.from('plugins').select('*').eq('id', pluginId).eq('is_deleted', false).single(),
+      supabase.from('plugin_purchases').select('id').eq('user_id', userId).eq('plugin_id', pluginId).maybeSingle(),
+      supabase.from('changelogs').select('*').eq('plugin_id', pluginId).order('created_at', { ascending: false }),
+    ]);
+
+    const role = roleRes.data?.role || 'guest';
+    const isAdmin = role === 'admin', isMod = role === 'moderator';
+    let walletBalance = walletRes.data?.balance ?? 0;
+    const p = pluginRes.data;
+
+    if (!p) { document.getElementById('loading').textContent = 'Plugin not found.'; }
+    else { renderPlugin(p, purchRes.data, changelogRes.data || []); }
+
+    function starsHtml(rating, interactive = false) {
+      const r = Math.round(rating || 0);
+      if (interactive) return `<div class="star-sel">${[1,2,3,4,5].map(i=>`<button class="star-sel__btn${i<=r?' sel':''}" data-star="${i}" type="button">★</button>`).join('')}</div>`;
+      return `<div class="stars-row">${[1,2,3,4,5].map(i=>`<span class="star${i<=r?' filled':''}">★</span>`).join('')}</div>`;
+    }
+
+    function renderPlugin(p, purchase, changelog) {
+      document.title = `${p.title} — Nokturne`;
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('pluginContent').style.display = 'block';
+
+      const owned = p.price_ntc === 0 || !!purchase || p.user_id === userId;
+      const isOwner = p.user_id === userId;
+      const typeLabel = (() => { const t = (p.file_type||'').toLowerCase(); return (t==='config'||t==='cfg') ? 'Config' : 'Plugin'; })();
+      const tags = (p.tags||[]);
+      const screenshots = (p.screenshots || p.thumbnail_url ? [p.thumbnail_url].filter(Boolean) : []);
+
+      const changelogHtml = changelog.length ? changelog.map(c => `
+        <div class="changelog-entry">
+          <div class="changelog-entry__ver">${esc(c.version||'Update')}</div>
+          <div class="changelog-entry__date">${new Date(c.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+          <div class="changelog-entry__notes">${esc(c.notes||'')}</div>
+        </div>`).join('') : '<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-faint);padding:4px 0;">No changelog entries yet</div>';
+
+      const priceDisplay = p.price_ntc === 0
+        ? `<div class="price-card__price free">FREE</div><div class="price-card__unit">no cost</div>`
+        : `<div class="price-card__price">${p.price_ntc}</div><div class="price-card__unit">NTC</div>`;
+
+      let btnLabel = owned ? (p.price_ntc===0?'Get Item':'Download') : `Get Item — ${p.price_ntc} NTC`;
+      let btnClass = owned ? 'buy-btn owned' : (p.price_ntc===0 ? 'buy-btn free-btn' : 'buy-btn');
+
+      const screenshotsHtml = screenshots.length ? `
+        <div class="panel-hd">Screenshots</div>
+        <div class="panel-body">
+          <div class="screenshots">${screenshots.map(s=>`<img src="${esc(s)}" class="screenshot" alt="" />`).join('')}</div>
+        </div>` : '';
+
+      document.getElementById('pluginContent').innerHTML = `
+        <div class="plugin-header">
+          <div class="plugin-type-tag">${typeLabel}</div>
+          <div class="plugin-title">${esc(p.title)}</div>
+          <div class="plugin-meta">
+            <div class="plugin-author">
+              <div class="plugin-author__av">◈</div>
+              <span class="plugin-author__name" data-user="${esc(p.username||'Unknown')}">${esc(p.username||'Unknown')}</span>
+            </div>
+            <div class="plugin-stat">↓ <span class="plugin-stat__val">${p.download_count||0}</span> downloads</div>
+            <div class="plugin-stat">${starsHtml(p.avg_rating)} <span class="plugin-stat__val" style="margin-left:3px;">${p.avg_rating ? p.avg_rating.toFixed(1) : '—'}</span></div>
+            ${p.version ? `<span class="version-badge">v${esc(p.version)}</span>` : ''}
+          </div>
+        </div>
+
+        <div class="plugin-layout">
+          <div>
+            <div class="desc-panel">
+              <div class="panel-hd">Description</div>
+              <div class="panel-body" id="descBody"></div>
+              ${tags.length ? `<div class="tags-list"><span class="tag-chip nokturne">Nokturne</span><span class="tag-chip">${typeLabel}</span>${tags.map(t=>`<span class="tag-chip">${esc(t)}</span>`).join('')}</div>` : ''}
+              ${screenshotsHtml}
+            </div>
+
+            <!-- Reviews -->
+            <div class="desc-panel">
+              <div class="panel-hd">Reviews <span id="reviewCount" style="opacity:.5;margin-left:6px;"></span></div>
+              <div class="panel-body" id="reviewList"><div style="font-family:var(--font-mono);font-size:10px;color:var(--text-faint);">Loading reviews...</div></div>
+
+              ${owned && !isOwner ? `
+              <div style="padding:16px 20px;border-top:1px solid var(--border);">
+                <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-faint);margin-bottom:10px;">Leave a Review</div>
+                ${starsHtml(0, true)}
+                <input class="form-input" id="reviewTitle" placeholder="Review title..." style="margin-bottom:8px;" />
+                <textarea class="form-textarea" id="reviewBody" placeholder="Write your review..."></textarea>
+                <button class="btn-sm" id="submitReview" style="margin-top:8px;">Submit Review</button>
+              </div>` : ''}
+            </div>
+
+            ${isOwner || isAdmin || isMod ? `
+            <div class="desc-panel" id="ownerPanel">
+              <div class="panel-hd">Owner Tools</div>
+              <div style="padding:16px 20px;display:flex;flex-direction:column;gap:10px;">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <input class="form-input" id="newVersion" placeholder="New version (e.g. 1.2.0)" style="max-width:200px;" />
+                  <textarea class="form-textarea" id="changelogNotes" placeholder="What changed in this version..." style="min-height:60px;flex:1;"></textarea>
+                </div>
+                <button class="btn-sm" id="pushChangelog">Push Update</button>
+                ${(isAdmin||isMod) ? `<button class="btn-sm" id="deletePlugin" style="background:rgba(255,34,80,.15);border:1px solid rgba(255,34,80,.4);color:var(--red-alert);">Delete Listing</button>` : ''}
+              </div>
+            </div>` : ''}
+          </div>
+
+          <!-- Right column -->
+          <div>
+            <div class="price-card">
+              <div class="price-card__hd">${priceDisplay}</div>
+              <div class="price-card__body">
+                <button class="buy-btn ${btnClass.replace('buy-btn ','')}" id="buyBtn">${btnLabel}</button>
+                <div class="price-card__bal" id="balDisplay">Balance: ${walletBalance} NTC</div>
+              </div>
+            </div>
+
+            <div class="desc-panel">
+              <div class="panel-hd">Changelog</div>
+              <div style="padding:14px 16px;">${changelogHtml}</div>
+            </div>
+          </div>
+        </div>`;
+
+      // Render description
+      document.getElementById('descBody').innerHTML = marked.parse(p.description||'*No description provided.*');
+
+      // Author click
+      document.querySelector('.plugin-author__name')?.addEventListener('click', e => {
+        window.location.href = `forum-user.html?user=${e.target.dataset.user}`;
+      });
+
+      // Star selector
+      let selectedRating = 0;
+      document.querySelectorAll('.star-sel__btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedRating = parseInt(btn.dataset.star);
+          document.querySelectorAll('.star-sel__btn').forEach((b,i) => b.classList.toggle('sel', i < selectedRating));
+        });
+      });
+
+      // Buy / Download
+      document.getElementById('buyBtn').addEventListener('click', async () => {
+        if (owned) {
+          if (!p.file_url) { toast('No download link available yet.', true); return; }
+          const { data, error } = await supabase.storage.from('plugins').createSignedUrl(p.file_url, 60);
+          if (error) { toast('Download error: ' + error.message, true); return; }
+          const a = document.createElement('a');
+          a.href = data.signedUrl;
+          a.download = p.file_name || 'plugin';
+          a.click();
+          toast('Download started');
+          return;
+        }
+        if (walletBalance < p.price_ntc) { toast('Insufficient NTC balance.', true); return; }
+        const btn = document.getElementById('buyBtn');
+        btn.disabled = true; btn.textContent = 'Processing...';
+        const newBal = walletBalance - p.price_ntc;
+        await supabase.from('wallets').update({ balance: newBal, updated_at: new Date().toISOString() }).eq('user_id', userId);
+        await supabase.from('transactions').insert({ user_id: userId, amount: -p.price_ntc, balance_after: newBal, type: 'purchase_plugin', description: 'Purchased: ' + p.title, reference_id: p.id });
+        if (p.user_id !== userId) {
+          const { data: sw } = await supabase.from('wallets').select('balance').eq('user_id', p.user_id).single();
+          const sellerBal = (sw?.balance??0) + p.price_ntc;
+          await supabase.from('wallets').update({ balance: sellerBal, updated_at: new Date().toISOString() }).eq('user_id', p.user_id);
+          await supabase.from('transactions').insert({ user_id: p.user_id, amount: p.price_ntc, balance_after: sellerBal, type: 'earn_other', description: 'Sale: ' + p.title, reference_id: p.id });
+          await supabase.from('notifications').insert({ user_id: p.user_id, type: 'plugin_purchase', title: 'Item sold!', body: `${username} purchased "${p.title}" for ${p.price_ntc} NTC`, link_type: 'plugin', link_id: p.id });
+        }
+        await supabase.from('plugins').update({ download_count: (p.download_count||0)+1 }).eq('id', p.id);
+        await supabase.from('plugin_purchases').insert({ user_id: userId, plugin_id: p.id, price_paid: p.price_ntc });
+        walletBalance = newBal;
+        btn.disabled = false; btn.textContent = 'Download'; btn.className = 'buy-btn owned';
+        document.getElementById('balDisplay').textContent = `Balance: ${walletBalance} NTC`;
+        toast('Purchase successful!');
+      });
+
+      // Submit review
+      document.getElementById('submitReview')?.addEventListener('click', async () => {
+        if (!selectedRating) { toast('Select a star rating first.', true); return; }
+        const title = document.getElementById('reviewTitle').value.trim();
+        const body  = document.getElementById('reviewBody').value.trim();
+        if (!body) { toast('Write a review before submitting.', true); return; }
+        const btn = document.getElementById('submitReview');
+        btn.disabled = true; btn.textContent = 'Submitting...';
+        const { error } = await supabase.from('plugin_reviews').insert({ plugin_id: p.id, user_id: userId, username, rating: selectedRating, title, body });
+        btn.disabled = false; btn.textContent = 'Submit Review';
+        if (error) { toast('Error: ' + error.message, true); return; }
+        toast('Review submitted!');
+        loadReviews(p.id, p.user_id);
+      });
+
+      // Owner: push changelog
+      document.getElementById('pushChangelog')?.addEventListener('click', async () => {
+        const version = document.getElementById('newVersion').value.trim();
+        const notes   = document.getElementById('changelogNotes').value.trim();
+        if (!version || !notes) { toast('Enter version and changelog notes.', true); return; }
+        await supabase.from('changelogs').insert({ plugin_id: p.id, user_id: userId, version, notes });
+        await supabase.from('plugins').update({ version }).eq('id', p.id).eq('user_id', userId);
+        document.getElementById('newVersion').value = ''; document.getElementById('changelogNotes').value = '';
+        toast('Update pushed!');
+        window.location.reload();
+      });
+
+      // Admin: delete
+      document.getElementById('deletePlugin')?.addEventListener('click', async () => {
+        if (!confirm('Delete this listing?')) return;
+        await supabase.from('plugins').update({ is_deleted: true }).eq('id', p.id);
+        toast('Listing deleted'); setTimeout(() => { window.location.href = 'forum.html?tab=market'; }, 1000);
+      });
+
+      loadReviews(p.id, p.user_id);
+    }
+
+    async function loadReviews(pluginId, ownerId) {
+      const { data: reviews } = await supabase.from('plugin_reviews').select('*').eq('plugin_id', pluginId).order('created_at', { ascending: false });
+      document.getElementById('reviewCount').textContent = `(${(reviews||[]).length})`;
+      const el = document.getElementById('reviewList');
+      if (!reviews || !reviews.length) { el.innerHTML = '<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-faint);">No reviews yet. Be the first!</div>'; return; }
+      el.innerHTML = reviews.map(r => `
+        <div class="review-card">
+          <div class="review-card__hd">
+            <span class="review-card__user">${esc(r.username)}</span>
+            <div class="stars-row">${[1,2,3,4,5].map(i=>`<span class="star${i<=r.rating?' filled':''}">★</span>`).join('')}</div>
+            ${r.title ? `<span style="font-weight:600;color:var(--text);font-size:12px;">${esc(r.title)}</span>` : ''}
+            <span class="review-card__date">${timeAgo(r.created_at)}</span>
+          </div>
+          <div class="review-card__body">${esc(r.body)}</div>
+          ${r.author_reply ? `<div class="review-reply"><div class="review-reply__label">Author reply</div><div class="review-reply__text">${esc(r.author_reply)}</div></div>` : ''}
+          ${(userId === ownerId && !r.author_reply) ? `<button class="btn-sm" data-rid="${r.id}" style="margin-top:8px;font-size:9px;" class="reply-btn">Reply to this review</button>` : ''}
+        </div>`).join('');
+      el.querySelectorAll('[data-rid]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const reply = prompt('Your reply:');
+          if (!reply) return;
+          await supabase.from('plugin_reviews').update({ author_reply: reply }).eq('id', btn.dataset.rid);
+          toast('Reply posted'); loadReviews(pluginId, ownerId);
+        });
+      });
+    }
+
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function timeAgo(ts) {
+      const s = Math.floor((Date.now()-new Date(ts))/1000);
+      if (s<60) return s+'s ago'; if (s<3600) return Math.floor(s/60)+'m ago';
+      if (s<86400) return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago';
+    }
+    function toast(msg, err=false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = 'toast show'+(err?' err':'');
+      setTimeout(()=>t.classList.remove('show'),3000);
+    }
+  </script>
+</body>
+</html>

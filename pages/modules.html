@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modules — Nokturne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <style>
+    .modules-section-label {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      margin-top: 56px;
+    }
+    .modules-section-label:first-of-type { margin-top: 0; }
+    .modules-section-label__text {
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .modules-section-label__line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border-mid), transparent);
+    }
+    .modules-section-label__badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--violet);
+      border: 1px solid var(--violet-dim);
+      padding: 3px 10px;
+      clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+      white-space: nowrap;
+    }
+    .modules-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+      margin-bottom: 4px;
+    }
+    .modules-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+    }
+    @media (max-width: 900px) { .modules-grid-4 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 900px) { .modules-grid-3 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .modules-grid-4, .modules-grid-3 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="hero__lines" aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
+
+  <div class="page-banner">
+    <div class="page-banner__bg" aria-hidden="true"></div>
+    <div class="container page-banner__inner">
+      <div class="t-label"><span class="t-label-line"></span>Module Library</div>
+      <h1 class="t-heading">BOTS &amp; <span class="accent-cyan">VISUALS</span></h1>
+      <p class="t-body">Four precision bots and a suite of visual overlays — all operating independently or together via the plugin bus.</p>
+    </div>
+  </div>
+
+  <main class="section">
+    <div class="container">
+
+      <!-- BOTS -->
+      <div class="modules-section-label reveal">
+        <span class="modules-section-label__text">BOTS</span>
+        <span class="modules-section-label__line"></span>
+        <span class="modules-section-label__badge">4 Modules</span>
+      </div>
+
+      <div class="modules-grid-4 reveal" data-delay="0.06">
+
+        <div class="mod-card" data-slug="bot-a">
+          <div class="mod-card__num" aria-hidden="true">A</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">BOT-A</div>
+            <span class="badge badge-cyan">Active</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Core</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Lorem ipsum dolor sit amet</li>
+            <li>Consectetur adipiscing elit</li>
+            <li>Sed do eiusmod tempor</li>
+            <li>Incididunt ut labore</li>
+          </ul>
+        </div>
+
+        <div class="mod-card" data-slug="bot-b">
+          <div class="mod-card__num" aria-hidden="true">B</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">BOT-B</div>
+            <span class="badge badge-cyan">Active</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Core</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Lorem ipsum dolor sit amet</li>
+            <li>Consectetur adipiscing elit</li>
+            <li>Sed do eiusmod tempor</li>
+            <li>Incididunt ut labore</li>
+          </ul>
+        </div>
+
+        <div class="mod-card" data-slug="bot-c">
+          <div class="mod-card__num" aria-hidden="true">C</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">BOT-C</div>
+            <span class="badge badge-violet">Secure</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Core</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Lorem ipsum dolor sit amet</li>
+            <li>Consectetur adipiscing elit</li>
+            <li>Sed do eiusmod tempor</li>
+            <li>Incididunt ut labore</li>
+          </ul>
+        </div>
+
+        <div class="mod-card" data-slug="bot-d">
+          <div class="mod-card__num" aria-hidden="true">D</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">BOT-D</div>
+            <span class="badge badge-cyan">Ready</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Core</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Lorem ipsum dolor sit amet</li>
+            <li>Consectetur adipiscing elit</li>
+            <li>Sed do eiusmod tempor</li>
+            <li>Incididunt ut labore</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- VISUALS -->
+      <div class="modules-section-label reveal" data-delay="0.04">
+        <span class="modules-section-label__text">VISUALS</span>
+        <span class="modules-section-label__line"></span>
+        <span class="modules-section-label__badge">3 Modules</span>
+      </div>
+
+      <div class="modules-grid-3 reveal" data-delay="0.08">
+
+        <div class="mod-card" data-slug="boost-timer">
+          <div class="mod-card__num" aria-hidden="true">V1</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">BOOST TIMER</div>
+            <span class="badge badge-cyan">Active</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Overlay</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Tracks large boost pad respawn</li>
+            <li>On-screen countdown timer</li>
+            <li>Pad location awareness</li>
+            <li>Customisable overlay position</li>
+          </ul>
+        </div>
+
+        <div class="mod-card" data-slug="camera-fov">
+          <div class="mod-card__num" aria-hidden="true">V2</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">CAMERA FOV</div>
+            <span class="badge badge-cyan">Active</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Overlay</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Real-time FOV adjustment</li>
+            <li>Dynamic field-of-view overlay</li>
+            <li>Preset slot system</li>
+            <li>Per-situation profiles</li>
+          </ul>
+        </div>
+
+        <div class="mod-card" data-slug="car-hitbox">
+          <div class="mod-card__num" aria-hidden="true">V3</div>
+          <div class="mod-card__top">
+            <div class="mod-card__name">CAR HITBOX</div>
+            <span class="badge badge-violet">Rendering</span>
+          </div>
+          <div class="mod-card__meta">
+            <span class="mod-card__meta-item">v1.0</span>
+            <span class="mod-card__meta-item">Overlay</span>
+          </div>
+          <div class="mod-card__divider"></div>
+          <ul class="mod-card__list">
+            <li>Hitbox wireframe rendering</li>
+            <li>Enemy and ally outlines</li>
+            <li>Collision boundary display</li>
+            <li>Adjustable opacity and colour</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    import { renderNavbar, renderFooter } from '../assets/js/modules/layout.js';
+    import { initNavbar }  from '../assets/js/modules/navbar.js';
+    import { initReveal }  from '../assets/js/modules/reveal.js';
+
+    const SUPABASE_URL = 'https://mmovqnaeozhzzeazrgdm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_CPoq9v6zAGVfRH4scFbxcA_gMRX4FJs';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    renderNavbar('../', 'modules');
+    renderFooter('../');
+    initNavbar();
+    initReveal();
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ── Load module changelogs and inject version badges + drawers ──
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return; // module page accessible to all, but versioning is members-only
+
+    const { data: logs } = await supabase
+      .from('changelogs')
+      .select('*')
+      .not('module_slug', 'is', null)
+      .order('created_at', { ascending: false });
+
+    if (!logs || !logs.length) return;
+
+    // Track last visit for "What's New" badge
+    const lastVisit = localStorage.getItem('mod_last_visit')
+      ? new Date(localStorage.getItem('mod_last_visit')) : null;
+    localStorage.setItem('mod_last_visit', new Date().toISOString());
+
+    // Group by module_slug
+    const bySlug = {};
+    logs.forEach(l => {
+      if (!bySlug[l.module_slug]) bySlug[l.module_slug] = [];
+      bySlug[l.module_slug].push(l);
+    });
+
+    // Add styles
+    const style = document.createElement('style');
+    style.textContent = `
+      .mod-card{position:relative;}
+      .whats-new-badge{display:inline-block;font-family:var(--font-mono);font-size:7px;letter-spacing:.2em;text-transform:uppercase;padding:2px 7px;border:1px solid var(--cyan-dim);background:var(--cyan-faint);color:var(--cyan);clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%);animation:pulse-new 2s ease-in-out infinite;margin-left:6px;vertical-align:middle;}
+      @keyframes pulse-new{0%,100%{opacity:1;}50%{opacity:.4;}}
+      .mod-version-toggle{display:block;width:calc(100% - 32px);margin:0 16px 12px;padding:6px 12px;background:transparent;border:1px solid var(--border);color:var(--text-faint);font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%);transition:all .15s;text-align:left;}
+      .mod-version-toggle:hover{border-color:var(--violet-dim);color:var(--violet);}
+      .mod-version-drawer{display:none;border-top:1px solid var(--border);background:var(--bg);padding:4px 0;}
+      .mod-version-drawer.open{display:block;}
+      .mod-ver-entry{padding:8px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;}
+      .mod-ver-entry:last-child{border-bottom:none;}
+      .mod-ver-entry__ver{font-family:var(--font-mono);font-size:10px;color:var(--violet);font-weight:700;min-width:44px;}
+      .mod-ver-entry__type{font-family:var(--font-mono);font-size:7px;letter-spacing:.14em;text-transform:uppercase;padding:2px 6px;border:1px solid;clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%);}
+      .vt-patch{color:var(--text-faint);border-color:var(--border);background:var(--bg-elevated);}
+      .vt-minor{color:var(--violet);border-color:var(--violet-dim);background:var(--violet-faint);}
+      .vt-major{color:var(--cyan);border-color:var(--cyan-dim);background:var(--cyan-faint);}
+      .vt-hotfix{color:var(--red-alert);border-color:rgba(255,34,80,.35);background:rgba(255,34,80,.06);}
+      .mod-ver-entry__notes{font-size:11px;font-weight:300;color:var(--text-dim);line-height:1.5;flex:1;}
+      .mod-ver-entry__date{font-family:var(--font-mono);font-size:9px;color:var(--text-faint);margin-left:auto;}
+    `;
+    document.head.appendChild(style);
+
+    // Inject into each mod-card that has a data-slug matching a changelog
+    document.querySelectorAll('.mod-card[data-slug]').forEach(card => {
+      const slug = card.dataset.slug;
+      const entries = bySlug[slug];
+      if (!entries || !entries.length) return;
+
+      const hasNew = entries.some(e => lastVisit && new Date(e.created_at) > lastVisit);
+
+      // Update the version text in mod-card__meta
+      const latestVer = entries[0].version;
+      const verEl = card.querySelector('.mod-card__meta-item');
+      if (verEl) {
+        verEl.textContent = latestVer;
+        if (hasNew) verEl.innerHTML += ' <span class="whats-new-badge">New</span>';
+      }
+
+      // Inject toggle button and drawer
+      const toggle = document.createElement('button');
+      toggle.className = 'mod-version-toggle';
+      toggle.dataset.slug = slug;
+      toggle.textContent = `📋 History (${entries.length})`;
+
+      const drawer = document.createElement('div');
+      drawer.className = 'mod-version-drawer';
+      drawer.id = `modvd-${slug}`;
+      drawer.innerHTML = entries.map(e => `
+        <div class="mod-ver-entry">
+          <span class="mod-ver-entry__ver">${e.version}</span>
+          <span class="mod-ver-entry__type vt-${e.type||'patch'}">${e.type||'patch'}</span>
+          <span class="mod-ver-entry__notes">${e.notes}</span>
+          <span class="mod-ver-entry__date">${new Date(e.created_at).toLocaleDateString()}</span>
+        </div>`).join('');
+
+      toggle.addEventListener('click', () => {
+        drawer.classList.toggle('open');
+        toggle.textContent = drawer.classList.contains('open')
+          ? `▲ Hide History`
+          : `📋 History (${entries.length})`;
+      });
+
+      card.appendChild(toggle);
+      card.appendChild(drawer);
+    });
+  </script>
+</body>
+</html>

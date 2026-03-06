@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller — Nokturne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <style>
+    body { padding-top: var(--nav-height); }
+    .seller-page { max-width: 1000px; margin: 0 auto; padding: 40px 24px 80px; }
+    .seller-header {
+      display: flex; align-items: flex-start; gap: 24px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+      padding: 28px; margin-bottom: 28px;
+    }
+    .seller-avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 2px solid var(--violet-dim); object-fit: cover;
+      background: var(--violet-faint); display: flex; align-items: center;
+      justify-content: center; font-size: 28px; color: var(--violet); flex-shrink: 0;
+    }
+    .seller-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .seller-info { flex: 1; }
+    .seller-username { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.06em; color: var(--text); line-height: 1; margin-bottom: 8px; }
+    .seller-role { font-family: var(--font-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; padding: 3px 12px; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); border: 1px solid; display: inline-block; margin-bottom: 12px; }
+    .role-admin     { color: var(--cyan);    border-color: var(--cyan-dim);    background: var(--cyan-faint); }
+    .role-moderator { color: #39FF80;        border-color: rgba(57,255,128,.35); background: rgba(57,255,128,.06); }
+    .role-premium   { color: var(--violet);  border-color: var(--violet-dim);  background: var(--violet-faint); }
+    .role-member    { color: var(--text-dim);border-color: var(--border-mid);  background: var(--bg-elevated); }
+    .seller-joined { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 28px; }
+    .stat-box { background: var(--bg-surface); border: 1px solid var(--border); clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); padding: 18px; text-align: center; }
+    .stat-box__val { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.06em; color: var(--violet); line-height: 1; margin-bottom: 4px; }
+    .stat-box__label { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); }
+    .section-hd { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .section-hd__title { font-family: var(--font-display); font-size: 20px; letter-spacing: 0.1em; color: var(--text); }
+    .section-hd__line { flex: 1; height: 1px; background: var(--border); }
+    .item-row { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: var(--bg-surface); border: 1px solid var(--border); clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); margin-bottom: 2px; cursor: pointer; transition: all 0.15s; text-decoration: none; display: flex; position: relative; }
+    .item-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: transparent; transition: background 0.15s; }
+    .item-row:hover { background: var(--bg-elevated); }
+    .item-row:hover::before { background: var(--violet); }
+    .item-type { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; padding: 2px 8px; border: 1px solid var(--border); color: var(--text-faint); clip-path: polygon(2px 0, 100% 0, calc(100% - 2px) 100%, 0 100%); flex-shrink: 0; }
+    .type-config  { color: var(--cyan);   border-color: var(--cyan-dim);   background: var(--cyan-faint); }
+    .type-script  { color: var(--violet); border-color: var(--violet-dim); background: var(--violet-faint); }
+    .type-library { color: #39FF80;       border-color: rgba(57,255,128,.35); background: rgba(57,255,128,.06); }
+    .type-plugin  { color: #FFE600;       border-color: rgba(255,230,0,.35); background: rgba(255,230,0,.06); }
+    .item-title { flex: 1; font-size: 13px; font-weight: 500; color: var(--text-dim); }
+    .item-price { font-family: var(--font-mono); font-size: 11px; color: var(--violet); }
+    .item-downloads { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); }
+    .item-stars { display: flex; gap: 2px; }
+    .star { font-size: 10px; color: var(--text-faint); }
+    .star.filled { color: var(--yellow, #FFE600); }
+    .loading-state { text-align: center; padding: 40px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--violet); animation: pulse 1.2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:.4;} }
+    .empty-state { text-align: center; padding: 40px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
+  </style>
+</head>
+<body>
+  <div class="seller-page" id="sellerPage">
+    <div class="loading-state">Loading seller...</div>
+  </div>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    import { renderNavbar, renderFooter } from '../assets/js/modules/layout.js';
+    import { initNavbar } from '../assets/js/modules/navbar.js';
+    const SUPABASE_URL = 'https://mmovqnaeozhzzeazrgdm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_CPoq9v6zAGVfRH4scFbxcA_gMRX4FJs';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    renderNavbar('../', '');
+    renderFooter('../');
+    initNavbar();
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; }
+
+    const params = new URLSearchParams(window.location.search);
+    const sellerId = params.get('id');
+    if (!sellerId) { document.getElementById('sellerPage').innerHTML = '<div class="empty-state">Seller not found</div>'; }
+
+    // Load seller profile + items
+    const [profileRes, itemsRes, roleRes] = await Promise.all([
+      supabase.from('profiles').select('id, username, updated_at').eq('id', sellerId).single(),
+      supabase.from('plugins').select('*').eq('user_id', sellerId).eq('is_deleted', false).order('created_at', { ascending: false }),
+      supabase.from('user_roles').select('role').eq('user_id', sellerId).single(),
+    ]);
+
+    const profile = profileRes.data;
+    const items = itemsRes.data || [];
+    const role = roleRes.data?.role || 'member';
+
+    if (!profile) { document.getElementById('sellerPage').innerHTML = '<div class="empty-state">Seller not found</div>'; }
+
+    const totalDownloads = items.reduce((a, b) => a + (b.download_count || 0), 0);
+    const ratedItems = items.filter(i => i.avg_rating > 0);
+    const avgRating = ratedItems.length ? (ratedItems.reduce((a,b) => a + (b.avg_rating||0), 0) / ratedItems.length).toFixed(1) : '—';
+
+    const roleLabels = { admin:'Admin', moderator:'Moderator', premium:'Premium', member:'Member', guest:'Guest' };
+    const roleClasses = { admin:'role-admin', moderator:'role-moderator', premium:'role-premium', member:'role-member', guest:'role-guest' };
+
+    function typeClass(t) {
+      if (!t) return 'type-plugin';
+      const tl = t.toLowerCase();
+      if (tl==='config'||tl==='cfg') return 'type-config';
+      if (tl==='script'||tl==='py'||tl==='lua'||tl==='js') return 'type-script';
+      if (tl==='library'||tl==='lib') return 'type-library';
+      return 'type-plugin';
+    }
+    function stars(r) { return [1,2,3,4,5].map(i=>`<span class="star${i<=(r||0)?' filled':''}">★</span>`).join(''); }
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    const itemsHtml = items.length ? items.map(p => `
+      <a class="item-row" href="market.html?item=${p.id}">
+        <span class="item-type ${typeClass(p.file_type)}">${p.file_type||'plugin'}</span>
+        <span class="item-title">${esc(p.title)}</span>
+        <div class="item-stars">${stars(p.avg_rating)}</div>
+        <span class="item-price">${p.price_ntc===0?'Free':p.price_ntc+' NTC'}</span>
+        <span class="item-downloads">↓ ${p.download_count||0}</span>
+      </a>`).join('') : '<div class="empty-state">No listings yet</div>';
+
+    document.getElementById('sellerPage').innerHTML = `
+      <div class="seller-header">
+        <div class="seller-avatar">◈</div>
+        <div class="seller-info">
+          <div class="seller-username">${esc(profile.username||'Unknown')}</div>
+          <span class="seller-role ${roleClasses[role]||'role-member'}">${roleLabels[role]||'Member'}</span>
+          <div class="seller-joined">Member since ${new Date(profile.updated_at||Date.now()).toLocaleDateString('en-US',{year:'numeric',month:'long'})}</div>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-box__val">${items.length}</div><div class="stat-box__label">Listings</div></div>
+        <div class="stat-box"><div class="stat-box__val">${totalDownloads}</div><div class="stat-box__label">Downloads</div></div>
+        <div class="stat-box"><div class="stat-box__val">${avgRating}</div><div class="stat-box__label">Avg Rating</div></div>
+      </div>
+      <div class="section-hd"><div class="section-hd__title">LISTINGS</div><div class="section-hd__line"></div></div>
+      ${itemsHtml}`;
+  </script>
+</body>
+</html>

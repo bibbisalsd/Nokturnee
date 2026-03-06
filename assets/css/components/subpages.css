@@ -1,0 +1,63 @@
+/* ============================================================
+   NOKTURNE — Subpage Styles
+   (Page banner, contact layout, active nav state)
+   ============================================================ */
+
+/* ── Page banner (replaces hero on subpages) ── */
+.page-banner {
+  position: relative;
+  padding: calc(var(--nav-height) + 72px) var(--section-pad-h) 56px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.page-banner__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 100% at 20% 50%, rgba(155,48,255,0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 80% at 80% 50%, rgba(0,240,255,0.05) 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-surface) 100%);
+}
+
+/* Accent line at bottom */
+.page-banner::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--violet-faint) 30%, var(--cyan-faint) 70%, transparent);
+}
+
+.page-banner__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.page-banner .t-label   { margin-bottom: 12px; }
+.page-banner .t-heading { margin-bottom: 16px; }
+.page-banner .t-body    { margin-top: 0; }
+
+/* ── Contact page two-column layout ── */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+@media (max-width: 860px) { .contact-layout { grid-template-columns: 1fr; } }
+
+/* ── Active nav link indicator ── */
+.navbar__link.active {
+  color: var(--text);
+}
+.navbar__link.active::after {
+  transform: scaleX(1);
+  background: var(--violet);
+}
+
+/* ── Subpage body padding ── */
+body {
+  padding-bottom: 0;
+}

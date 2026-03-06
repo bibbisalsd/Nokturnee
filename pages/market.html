@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Market — Nokturne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+  <style>
+    body { padding-top: var(--nav-height); }
+
+    /* ── Layout ── */
+    .market-page { display: flex; min-height: calc(100vh - var(--nav-height)); max-width: 1400px; margin: 0 auto; width: 100%; }
+    .market-page-wrap { display: flex; justify-content: center; }
+
+    /* ── Left sidebar ── */
+    .market-sidebar {
+      width: 200px; flex-shrink: 0;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      position: sticky; top: var(--nav-height);
+      height: calc(100vh - var(--nav-height));
+      overflow-y: auto; padding: 20px 0;
+    }
+    @media(max-width:900px){ .market-sidebar { display:none; } }
+    .sidebar-section { margin-bottom: 24px; }
+    .sidebar-section__label {
+      font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--text-faint);
+      padding: 0 16px; margin-bottom: 6px;
+    }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 16px; font-size: 12px; font-weight: 500;
+      color: var(--text-dim); text-decoration: none; cursor: pointer;
+      background: transparent; border: none; width: 100%; text-align: left;
+      transition: all 0.15s; border-left: 2px solid transparent;
+    }
+    .sidebar-link:hover { color: var(--text); background: var(--bg-elevated); }
+    .sidebar-link.active { color: var(--violet); background: var(--violet-faint); border-left-color: var(--violet); }
+    .sidebar-link__icon { font-size: 14px; flex-shrink: 0; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 8px 16px; }
+    .sidebar-balance {
+      margin: 0 12px 16px;
+      padding: 12px 14px;
+      background: rgba(155,48,255,0.08);
+      border: 1px solid var(--violet-dim);
+      clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    }
+    .sidebar-balance__label { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
+    .sidebar-balance__val { font-family: var(--font-display); font-size: 28px; letter-spacing: 0.06em; color: var(--violet); line-height: 1; }
+    .sidebar-balance__ntc { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.16em; color: var(--text-faint); }
+
+    /* ── Main content ── */
+    .market-main { flex: 1; padding: 24px 28px 60px; min-width: 0; }
+
+    /* ── Top bar ── */
+    .market-topbar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .market-title { font-family: var(--font-display); font-size: 28px; letter-spacing: 0.1em; color: var(--text); line-height: 1; margin-right: 8px; }
+    .market-title span { color: var(--violet); }
+    .market-subtitle { font-size: 12px; font-weight: 300; color: var(--text-faint); }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .filter-tabs { display: flex; gap: 1px; background: var(--border); border: 1px solid var(--border); clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
+    .filter-tab {
+      padding: 7px 16px; background: var(--bg-surface);
+      border: none; color: var(--text-faint);
+      font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-tab:hover { background: var(--bg-elevated); color: var(--text-dim); }
+    .filter-tab.active { background: var(--violet); color: #fff; }
+    .price-tabs { display: flex; gap: 1px; background: var(--border); border: 1px solid var(--border); clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); }
+    .price-tab {
+      padding: 7px 14px; background: var(--bg-surface);
+      border: none; color: var(--text-faint);
+      font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .price-tab:hover { background: var(--bg-elevated); color: var(--text-dim); }
+    .price-tab.active { background: var(--bg-elevated); color: var(--cyan); border: 1px solid var(--cyan-dim); }
+    .search-wrap { flex: 1; min-width: 180px; position: relative; }
+    .search-input {
+      width: 100%; background: var(--bg-surface); border: 1px solid var(--border);
+      color: var(--text); font-family: var(--font-body); font-size: 12px;
+      padding: 8px 14px 8px 36px; outline: none;
+      clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+      transition: border-color 0.2s; box-sizing: border-box;
+    }
+    .search-input:focus { border-color: var(--violet-dim); }
+    .search-input::placeholder { color: var(--text-faint); }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-faint); font-size: 13px; pointer-events: none; }
+    .sort-select {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      color: var(--text-dim); font-family: var(--font-mono); font-size: 9px;
+      letter-spacing: 0.12em; padding: 8px 12px; outline: none; cursor: pointer;
+      clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+      transition: border-color 0.2s;
+    }
+    .sort-select:focus { border-color: var(--violet-dim); }
+
+    /* ── Item rows ── */
+    .item-list { display: flex; flex-direction: column; gap: 2px; }
+    .item-row {
+      display: flex; align-items: center; gap: 16px;
+      padding: 12px 16px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      cursor: pointer; transition: all 0.15s; text-decoration: none; position: relative;
+    }
+    .item-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: transparent; transition: background 0.15s; }
+    .item-row:hover { background: var(--bg-elevated); border-color: var(--border-mid); }
+    .item-row:hover::before { background: var(--violet); }
+    .item-row__type {
+      font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.18em;
+      text-transform: uppercase; padding: 3px 10px;
+      clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%);
+      border: 1px solid; flex-shrink: 0; min-width: 70px; text-align: center;
+    }
+    .type-config  { color: var(--cyan);   border-color: var(--cyan-dim);   background: var(--cyan-faint); }
+    .type-script  { color: var(--violet); border-color: var(--violet-dim); background: var(--violet-faint); }
+    .type-library { color: #39FF80;       border-color: rgba(57,255,128,.35); background: rgba(57,255,128,.06); }
+    .type-plugin  { color: #FFE600;       border-color: rgba(255,230,0,.35); background: rgba(255,230,0,.06); }
+    .item-row__info { flex: 1; min-width: 0; }
+    .item-row__title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-row__tags { font-size: 11px; font-weight: 300; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-row__author { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); letter-spacing: 0.08em; flex-shrink: 0; min-width: 100px; }
+    .item-row__author span { color: var(--text-dim); }
+    .item-row__price { font-family: var(--font-display); font-size: 20px; letter-spacing: 0.06em; color: var(--violet); flex-shrink: 0; min-width: 80px; text-align: right; line-height: 1; }
+    .item-row__price.free { color: #39FF80; font-size: 16px; letter-spacing: 0.1em; }
+    .item-row__price span { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); }
+    .item-row__purchases { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); flex-shrink: 0; min-width: 70px; text-align: right; }
+    .item-row__stars { display: flex; gap: 2px; flex-shrink: 0; }
+    .star { color: var(--text-faint); font-size: 11px; }
+    .star.filled { color: var(--yellow); }
+
+    /* ── Item detail view ── */
+    .detail-view { display: none; }
+    .detail-view.open { display: block; }
+    .list-view.hidden { display: none; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--text-faint); background: none;
+      border: none; cursor: pointer; padding: 0 0 20px; transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--violet); }
+
+    .detail-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+    @media(max-width:900px){ .detail-layout { grid-template-columns: 1fr; } }
+
+    .detail-header { margin-bottom: 20px; }
+    .detail-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+    .detail-title { font-family: var(--font-display); font-size: 32px; letter-spacing: 0.06em; color: var(--text); line-height: 1.1; }
+    .detail-price-block { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+    .detail-price { font-family: var(--font-display); font-size: 40px; letter-spacing: 0.08em; color: var(--violet); line-height: 1; }
+    .detail-price.free { color: #39FF80; font-size: 32px; }
+    .detail-price span { font-family: var(--font-mono); font-size: 14px; color: var(--text-faint); }
+    .detail-buy-btn {
+      padding: 11px 28px; background: var(--violet); border: none; color: #fff;
+      font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;
+      clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+      transition: background 0.18s; white-space: nowrap;
+    }
+    .detail-buy-btn:hover { background: #7B18DF; }
+    .detail-buy-btn.owned { background: rgba(57,255,128,.12); color: #39FF80; border: 1px solid rgba(57,255,128,.3); }
+    .detail-buy-btn.owned:hover { background: rgba(57,255,128,.2); }
+    .detail-buy-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .detail-meta-row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+    .detail-author-chip { display: flex; align-items: center; gap: 8px; }
+    .detail-author-chip img { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border-mid); }
+    .detail-author-chip span { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); font-weight: 700; }
+    .detail-downloads { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); letter-spacing: 0.1em; }
+    .detail-stars { display: flex; gap: 3px; }
+    .detail-star { font-size: 16px; color: var(--text-faint); }
+    .detail-star.filled { color: var(--yellow); }
+
+    .detail-panel {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      margin-bottom: 14px; overflow: hidden;
+    }
+    .detail-panel__hd {
+      padding: 10px 16px; border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--text-faint); background: var(--bg-elevated);
+    }
+    .detail-panel__body { padding: 16px; }
+    .detail-panel__body.md-content { font-size: 13px; font-weight: 300; color: var(--text-dim); line-height: 1.8; }
+    .detail-panel__body.md-content h1,.detail-panel__body.md-content h2,.detail-panel__body.md-content h3 { font-family: var(--font-body); color: var(--text); margin: 14px 0 6px; font-size: 14px; font-weight: 700; }
+    .detail-panel__body.md-content code { font-family: var(--font-mono); background: var(--bg-elevated); padding: 2px 6px; border: 1px solid var(--border); font-size: 11px; }
+    .detail-panel__body.md-content pre { background: var(--bg-elevated); border: 1px solid var(--border); padding: 12px; overflow-x: auto; margin: 10px 0; }
+    .detail-panel__body.md-content pre code { background: none; border: none; padding: 0; }
+    .detail-panel__body.md-content a { color: var(--violet); }
+    .detail-panel__body.md-content blockquote { border-left: 2px solid var(--violet-dim); padding-left: 10px; color: var(--text-faint); margin: 8px 0; }
+
+    /* Changelog */
+    .changelog-entry { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .changelog-entry:last-child { border-bottom: none; }
+    .changelog-entry__version { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--violet); margin-bottom: 4px; }
+    .changelog-entry__date { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); margin-bottom: 6px; letter-spacing: 0.1em; }
+    .changelog-entry__body { font-size: 12px; font-weight: 300; color: var(--text-dim); line-height: 1.65; white-space: pre-line; }
+
+    /* Tags */
+    .tags-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 16px; }
+    .tag-chip { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 10px; border: 1px solid var(--border-mid); color: var(--text-faint); clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%); }
+
+    /* Screenshot gallery */
+    .gallery { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 16px; }
+    .gallery img { height: 100px; width: auto; border: 1px solid var(--border); cursor: pointer; transition: border-color 0.15s; }
+    .gallery img:hover { border-color: var(--violet-dim); }
+
+    /* Right column panels */
+    .detail-info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .detail-info-row:last-child { border-bottom: none; }
+    .detail-info-key { color: var(--text-faint); font-weight: 300; }
+    .detail-info-val { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+
+    /* ── Reviews ── */
+    .reviews-section { margin-top: 28px; }
+    .section-hd { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .section-hd__title { font-family: var(--font-display); font-size: 20px; letter-spacing: 0.1em; color: var(--text); }
+    .section-hd__line { flex: 1; height: 1px; background: var(--border); }
+
+    .review-card {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+      margin-bottom: 8px; overflow: hidden;
+    }
+    .review-card__header { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px 8px; }
+    .review-card__avatar { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-mid); flex-shrink: 0; object-fit: cover; background: var(--bg-elevated); }
+    .review-card__meta { flex: 1; }
+    .review-card__username { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .review-card__stars { display: flex; gap: 2px; margin-bottom: 3px; }
+    .review-card__date { font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); letter-spacing: 0.1em; }
+    .review-card__report { background: none; border: none; font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); cursor: pointer; padding: 2px 6px; transition: color 0.15s; }
+    .review-card__report:hover { color: var(--red-alert); }
+    .review-card__body { padding: 0 16px 14px; }
+    .review-card__title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .review-card__text { font-size: 12px; font-weight: 300; color: var(--text-dim); line-height: 1.65; }
+    .review-card__reply { margin: 8px 16px 14px; padding: 10px 14px; background: var(--bg-elevated); border-left: 2px solid var(--violet-dim); }
+    .review-card__reply-label { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--violet); margin-bottom: 4px; }
+    .review-card__reply-text { font-size: 12px; color: var(--text-dim); line-height: 1.65; }
+
+    /* Post review form */
+    .review-form { background: var(--bg-surface); border: 1px solid var(--border-mid); clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); padding: 20px; margin-top: 16px; }
+    .review-form__title { font-family: var(--font-display); font-size: 18px; letter-spacing: 0.1em; color: var(--text); margin-bottom: 14px; }
+    .star-selector { display: flex; gap: 6px; margin-bottom: 14px; }
+    .star-pick { font-size: 24px; color: var(--border-mid); cursor: pointer; transition: color 0.15s; line-height: 1; }
+    .star-pick.active { color: var(--yellow); }
+    .form-input { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 13px; padding: 10px 14px; outline: none; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); transition: border-color 0.2s; box-sizing: border-box; margin-bottom: 10px; }
+    .form-input:focus { border-color: var(--violet-dim); }
+    .form-input::placeholder { color: var(--text-faint); }
+    .form-textarea { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text); font-family: var(--font-body); font-size: 13px; font-weight: 300; padding: 10px 14px; outline: none; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); transition: border-color 0.2s; box-sizing: border-box; min-height: 90px; resize: vertical; margin-bottom: 10px; }
+    .form-textarea:focus { border-color: var(--violet-dim); }
+    .form-textarea::placeholder { color: var(--text-faint); }
+    .btn-submit { padding: 10px 28px; background: var(--violet); border: none; color: #fff; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%); transition: background 0.18s; }
+    .btn-submit:hover { background: #7B18DF; }
+    .btn-submit:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* Upload panel (admin only) */
+    .upload-panel { background: var(--bg-surface); border: 1px solid var(--violet-dim); clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); margin-bottom: 16px; overflow: hidden; display: none; }
+    .upload-panel.visible { display: block; }
+    .upload-panel__hd { padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--violet-faint); font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--violet); display: flex; align-items: center; justify-content: space-between; }
+    .upload-panel__body { padding: 16px; }
+    .form-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+    .form-row .form-input { margin-bottom: 0; }
+    select.form-input { cursor: pointer; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; }
+    .file-drop { border: 1px dashed var(--border-mid); background: var(--bg-elevated); padding: 16px; text-align: center; cursor: pointer; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%); margin-bottom: 10px; transition: border-color 0.2s; }
+    .file-drop:hover { border-color: var(--violet-dim); }
+    .file-drop__text { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
+    .file-drop__name { font-family: var(--font-mono); font-size: 11px; color: var(--violet); margin-top: 4px; }
+    .upload-err { font-family: var(--font-mono); font-size: 10px; color: var(--red-alert); display: none; margin-top: 6px; }
+    .upload-err.show { display: block; }
+
+    /* Pagination */
+    .pagination { display: flex; align-items: center; gap: 4px; margin-top: 16px; }
+    .page-btn { padding: 6px 12px; background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-faint); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%); transition: all 0.15s; }
+    .page-btn:hover { border-color: var(--border-mid); color: var(--text-dim); }
+    .page-btn.active { background: var(--violet); border-color: var(--violet); color: #fff; }
+
+    .empty-state { text-align: center; padding: 60px 24px; }
+    .empty-state__text { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); }
+    .loading-state { text-align: center; padding: 40px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--violet); animation: pulse 1.2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:.4;} }
+
+    .toast { position: fixed; bottom: 24px; right: 24px; z-index: 400; padding: 12px 20px; background: var(--bg-elevated); border: 1px solid var(--violet-dim); clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--violet); display: none; }
+    .toast.show { display: block; animation: slideUp 0.3s ease; }
+    .toast.err { color: var(--red-alert); border-color: var(--red-alert); }
+    @keyframes slideUp { from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;} }
+
+    /* Lightbox */
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.9); z-index: 500; display: none; align-items: center; justify-content: center; cursor: pointer; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border: 1px solid var(--border-mid); }
+  </style>
+</head>
+<body>
+  <div class="hero__lines" aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
+  <div class="toast" id="toast"></div>
+  <div class="lightbox" id="lightbox"><img id="lightboxImg" src="" alt="" /></div>
+
+  <div class="market-page-wrap">
+  <div class="market-page">
+    <!-- Sidebar -->
+    <aside class="market-sidebar">
+      <div class="sidebar-balance">
+        <div class="sidebar-balance__label">NTC Balance</div>
+        <div class="sidebar-balance__val" id="sidebarBal">—</div>
+        <div class="sidebar-balance__ntc">Coins</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section__label">Browse</div>
+        <button class="sidebar-link active" data-filter="all"><span class="sidebar-link__icon">◈</span>All Items</button>
+        <button class="sidebar-link" data-filter="config"><span class="sidebar-link__icon">⚙</span>Configs</button>
+        <button class="sidebar-link" data-filter="script"><span class="sidebar-link__icon">〈/〉</span>Scripts</button>
+        <button class="sidebar-link" data-filter="library"><span class="sidebar-link__icon">◻</span>Libraries</button>
+        <button class="sidebar-link" data-filter="plugin"><span class="sidebar-link__icon">⬡</span>Plugins</button>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-section__label">My Account</div>
+        <a class="sidebar-link" href="profile.html"><span class="sidebar-link__icon">◯</span>My Items</a>
+        <a class="sidebar-link" href="coins.html"><span class="sidebar-link__icon">↓</span>Add Funds</a>
+        <a class="sidebar-link" href="profile.html#purchases"><span class="sidebar-link__icon">≡</span>Purchases</a>
+        <a class="sidebar-link" href="profile.html#transactions"><span class="sidebar-link__icon">⇄</span>Transactions</a>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section" id="adminSidebarSection" style="display:none;">
+        <div class="sidebar-section__label">Admin</div>
+        <button class="sidebar-link" id="sidebarUploadBtn"><span class="sidebar-link__icon">+</span>Upload Item</button>
+        <a class="sidebar-link" href="admin.html"><span class="sidebar-link__icon">⚿</span>Admin Panel</a>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="market-main">
+
+      <!-- List view -->
+      <div class="list-view" id="listView">
+        <div class="market-topbar">
+          <div>
+            <div class="market-title">NOKTURNE <span>MARKET</span></div>
+            <div class="market-subtitle">Community configs, scripts, plugins and libraries</div>
+          </div>
+        </div>
+
+        <!-- Admin upload panel -->
+        <div class="upload-panel" id="uploadPanel">
+          <div class="upload-panel__hd">
+            <span>Upload New Item</span>
+            <button style="background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:16px;" id="closeUploadBtn">✕</button>
+          </div>
+          <div class="upload-panel__body">
+            <div class="form-row">
+              <input class="form-input" id="upTitle" placeholder="Title" style="flex:2;" />
+              <input class="form-input" id="upVersion" placeholder="Version" style="max-width:100px;" />
+              <select class="form-input" id="upType" style="max-width:120px;">
+                <option value="config">Config</option>
+                <option value="script">Script</option>
+                <option value="library">Library</option>
+                <option value="plugin">Plugin</option>
+              </select>
+              <select class="form-input" id="upFlair" style="max-width:100px;">
+                <option value="Free">Free</option>
+                <option value="Paid">Paid</option>
+                <option value="WIP">WIP</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <input class="form-input" id="upPrice" type="number" min="0" placeholder="Price in NTC (0 = free)" />
+              <input class="form-input" id="upTags" placeholder="Tags (comma separated)" style="flex:2;" />
+            </div>
+            <textarea class="form-textarea" id="upDesc" placeholder="Description (Markdown supported)..." style="margin-bottom:10px;"></textarea>
+            <div class="file-drop" id="fileDrop">
+              <input type="file" id="upFile" accept=".zip,.py,.lua,.js" style="display:none;" />
+              <div class="file-drop__text">Drop file here or click to browse (.zip .py .lua .js)</div>
+              <div class="file-drop__name" id="fileLabel"></div>
+            </div>
+            <div class="file-drop" id="thumbDrop" style="padding:10px;">
+              <input type="file" id="upThumb" accept="image/*" style="display:none;" />
+              <div class="file-drop__text">Thumbnail image (optional)</div>
+              <div class="file-drop__name" id="thumbLabel"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span class="upload-err" id="upErr"></span>
+              <button class="btn-submit" id="upSubmitBtn">Publish Item</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured row -->
+        <div id="featuredSection" style="display:none;margin-bottom:20px;">
+          <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--violet);margin-bottom:8px;display:flex;align-items:center;gap:10px;">
+            <span>★ Featured</span><span style="flex:1;height:1px;background:var(--violet-dim);"></span>
+          </div>
+          <div id="featuredList" class="item-list"></div>
+          <div style="height:1px;background:var(--border);margin:16px 0;"></div>
+        </div>
+
+        <!-- License gate for non-premium -->
+        <div id="licenseGate" style="display:none;background:var(--bg-surface);border:1px solid var(--violet-dim);clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));padding:32px;text-align:center;margin-bottom:16px;">
+          <div style="font-family:var(--font-display);font-size:28px;letter-spacing:0.08em;color:var(--text);margin-bottom:8px;">PREMIUM REQUIRED</div>
+          <div style="font-size:13px;font-weight:300;color:var(--text-dim);margin-bottom:20px;">An active Nokturne license is required to purchase and download items from the marketplace.</div>
+          <a href="pricing.html" class="btn btn-primary" style="padding:12px 32px;font-size:11px;">Get Access</a>
+        </div>
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-type="all">All</button>
+            <button class="filter-tab" data-type="config">Configs</button>
+            <button class="filter-tab" data-type="script">Scripts</button>
+            <button class="filter-tab" data-type="library">Libraries</button>
+            <button class="filter-tab" data-type="plugin">Plugins</button>
+          </div>
+          <div class="price-tabs">
+            <button class="price-tab active" data-price="all">All</button>
+            <button class="price-tab" data-price="paid">Paid</button>
+            <button class="price-tab" data-price="free">Free</button>
+          </div>
+          <div class="search-wrap">
+            <span class="search-icon">⌕</span>
+            <input class="search-input" id="searchInput" placeholder="Search..." />
+          </div>
+          <select class="sort-select" id="sortSelect">
+            <option value="new">Newest first</option>
+            <option value="popular">Most purchased</option>
+            <option value="rating">Highest rated</option>
+            <option value="price-asc">Price: low to high</option>
+          </select>
+        </div>
+
+        <div class="item-list" id="itemList">
+          <div class="loading-state">Loading market...</div>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+
+      <!-- Detail view -->
+      <div class="detail-view" id="detailView">
+        <button class="back-link" id="backBtn">← Back to market</button>
+        <div id="detailContent"></div>
+      </div>
+
+    </main>
+  </div>
+  </div><!-- end market-page-wrap -->
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    import { renderNavbar, renderFooter } from '../assets/js/modules/layout.js';
+    import { initNavbar } from '../assets/js/modules/navbar.js';
+
+    const SUPABASE_URL = 'https://mmovqnaeozhzzeazrgdm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_CPoq9v6zAGVfRH4scFbxcA_gMRX4FJs';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    renderNavbar('../', 'market');
+    renderFooter('../');
+    initNavbar();
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; }
+    const userId = session.user.id;
+    const username = session.user.user_metadata?.full_name || session.user.user_metadata?.user_name || 'Unknown';
+    const avatarUrl = session.user.user_metadata?.avatar_url || '';
+
+    let allItems = [], purchases = new Set(), walletBalance = 0, isAdmin = false, isMod = false;
+    let currentType = 'all', currentPrice = 'all', currentSort = 'new', searchQuery = '';
+    let currentPage = 0; const PAGE_SIZE = 20;
+
+    // Load role + wallet
+    const [roleRes, walletRes] = await Promise.all([
+      supabase.from('user_roles').select('role').eq('user_id', userId).single(),
+      supabase.from('wallets').select('balance').eq('user_id', userId).single(),
+    ]);
+    const role = roleRes.data?.role || 'guest';
+    isAdmin = role === 'admin';
+    isMod = role === 'moderator';
+    const isPremium = ['admin','moderator','premium'].includes(role);
+    walletBalance = walletRes.data?.balance ?? 0;
+    document.getElementById('sidebarBal').textContent = walletBalance;
+    if (isAdmin || isMod) {
+      document.getElementById('adminSidebarSection').style.display = 'block';
+    }
+    // Show license gate for non-premium on paid items
+    if (!isPremium) {
+      document.getElementById('licenseGate').style.display = 'block';
+    }
+
+    // Load purchases
+    const { data: purchData } = await supabase.from('plugin_purchases').select('plugin_id').eq('user_id', userId);
+    (purchData || []).forEach(p => purchases.add(p.plugin_id));
+
+    // Load items
+    async function loadItems() {
+      const { data } = await supabase.from('plugins').select('*').eq('is_deleted', false).order('created_at', { ascending: false });
+      allItems = data || [];
+      // Render featured
+      const featured = allItems.filter(p => p.is_featured);
+      if (featured.length) {
+        document.getElementById('featuredSection').style.display = 'block';
+        document.getElementById('featuredList').innerHTML = featured.map(p => renderItemRow(p)).join('');
+        document.querySelectorAll('#featuredList .item-row').forEach(row => row.addEventListener('click', () => openDetail(row.dataset.id)));
+      }
+      renderList();
+    }
+
+    function renderItemRow(p) {
+      const priceHtml = p.price_ntc === 0
+        ? `<span class="item-row__price free">FREE</span>`
+        : `<span class="item-row__price">${p.price_ntc}<span> NTC</span></span>`;
+      return `<div class="item-row" data-id="${p.id}">
+        <span class="item-row__type ${typeClass(p)}">${typeLabel(p)}</span>
+        <div class="item-row__info">
+          <div class="item-row__title">${esc(p.title)}</div>
+          <div class="item-row__tags">${esc((p.tags||[]).join(', '))}</div>
+        </div>
+        <a class="item-row__author" href="seller.html?id=${p.user_id}" onclick="event.stopPropagation()">by <span>${esc(p.username)}</span></a>
+        ${priceHtml}
+        <div class="item-row__purchases">↓ ${p.download_count||0}</div>
+        <div class="item-row__stars">${stars(p.avg_rating||0)}</div>
+      </div>`;
+    }
+
+    function getFiltered() {
+      let list = allItems;
+      if (currentType !== 'all') list = list.filter(p => (p.file_type === currentType || (p.tags||[]).includes(currentType) || p.flair?.toLowerCase() === currentType));
+      if (currentPrice === 'free') list = list.filter(p => p.price_ntc === 0);
+      if (currentPrice === 'paid') list = list.filter(p => p.price_ntc > 0);
+      if (searchQuery) list = list.filter(p => p.title.toLowerCase().includes(searchQuery) || (p.description||'').toLowerCase().includes(searchQuery) || (p.tags||[]).join(' ').toLowerCase().includes(searchQuery));
+      if (currentSort === 'popular') list = [...list].sort((a,b) => (b.download_count||0)-(a.download_count||0));
+      if (currentSort === 'price-asc') list = [...list].sort((a,b) => a.price_ntc-b.price_ntc);
+      return list;
+    }
+
+    function stars(rating, size=11) {
+      return [1,2,3,4,5].map(i => `<span class="star${i<=(rating||0)?' filled':''}">★</span>`).join('');
+    }
+
+    function typeClass(p) {
+      const t = (p.file_type||'plugin').toLowerCase();
+      if (t==='config'||t==='cfg') return 'type-config';
+      if (t==='script'||t==='py'||t==='lua'||t==='js') return 'type-script';
+      if (t==='library'||t==='lib') return 'type-library';
+      return 'type-plugin';
+    }
+    function typeLabel(p) {
+      const t = (p.file_type||'plugin').toLowerCase();
+      if (t==='config'||t==='cfg') return 'Config';
+      if (t==='script'||t==='py'||t==='lua'||t==='js') return 'Script';
+      if (t==='library'||t==='lib') return 'Library';
+      return 'Plugin';
+    }
+
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    function renderList() {
+      const list = getFiltered();
+      const start = currentPage * PAGE_SIZE;
+      const page = list.slice(start, start + PAGE_SIZE);
+      const container = document.getElementById('itemList');
+
+      if (!page.length) { container.innerHTML = '<div class="empty-state"><div class="empty-state__text">No items found</div></div>'; return; }
+
+      container.innerHTML = page.map(p => renderItemRow(p)).join('');
+
+      container.querySelectorAll('.item-row').forEach(row => {
+        row.addEventListener('click', () => openDetail(row.dataset.id));
+      });
+
+      // Pagination
+      const total = list.length;
+      const pages = Math.ceil(total / PAGE_SIZE);
+      const pg = document.getElementById('pagination');
+      if (pages <= 1) { pg.innerHTML = ''; return; }
+      pg.innerHTML = `
+        <button class="page-btn" data-p="0">First</button>
+        ${Array.from({length:pages},(_,i)=>`<button class="page-btn${i===currentPage?' active':''}" data-p="${i}">${i+1}</button>`).join('')}
+        <button class="page-btn" data-p="${pages-1}">Last</button>`;
+      pg.querySelectorAll('[data-p]').forEach(btn => {
+        btn.addEventListener('click', () => { currentPage = parseInt(btn.dataset.p); renderList(); window.scrollTo(0,0); });
+      });
+    }
+
+    // ── Detail view
+    async function openDetail(itemId) {
+      const p = allItems.find(x => String(x.id) === String(itemId));
+      if (!p) return;
+      document.getElementById('listView').classList.add('hidden');
+      document.getElementById('detailView').classList.add('open');
+
+      const owned = p.price_ntc === 0 || purchases.has(p.id) || p.user_id === userId;
+      const avgRating = p.avg_rating || 0;
+      const priceHtml = p.price_ntc === 0
+        ? `<div class="detail-price free">FREE</div>`
+        : `<div class="detail-price">${p.price_ntc}<span> NTC</span></div>`;
+      let btnLabel = owned ? 'Download' : `Get Item — ${p.price_ntc} NTC`;
+      const btnClass = owned ? 'detail-buy-btn owned' : 'detail-buy-btn';
+
+      const thumbHtml = p.thumbnail_url
+        ? `<img src="${esc(p.thumbnail_url)}" alt="thumb" style="width:100%;height:200px;object-fit:cover;border:1px solid var(--border);margin-bottom:14px;" />`
+        : '';
+
+      const tagsHtml = (p.tags||[]).length ? `<div class="tags-list">${(p.tags||[]).map(t=>`<span class="tag-chip">${esc(t)}</span>`).join('')}</div>` : '';
+
+      document.getElementById('detailContent').innerHTML = `
+        <div class="detail-layout">
+          <div>
+            <div class="detail-header">
+              <div class="detail-title-row">
+                <div>
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <span class="item-row__type ${typeClass(p)}">${typeLabel(p)}</span>
+                    ${p.flair?`<span class="item-row__type type-config">${p.flair}</span>`:''}
+                  </div>
+                  <div class="detail-title">${esc(p.title)}</div>
+                </div>
+                <div class="detail-price-block">
+                  ${priceHtml}
+                  <div class="detail-downloads">↓ ${p.download_count||0} downloads</div>
+                </div>
+              </div>
+              <div class="detail-meta-row">
+                <div class="detail-author-chip">
+                  <div style="width:24px;height:24px;border-radius:50%;background:var(--violet-faint);border:1px solid var(--violet-dim);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--violet);">◈</div>
+                  <a href="seller.html?id=${p.user_id}" style="color:var(--text-dim);text-decoration:none;font-family:var(--font-mono);font-size:11px;font-weight:700;transition:color 0.15s;" onmouseover="this.style.color='var(--violet)'" onmouseout="this.style.color='var(--text-dim)'">${esc(p.username)}</a>
+                </div>
+                <div class="detail-stars">${[1,2,3,4,5].map(i=>`<span class="detail-star${i<=avgRating?' filled':''}">★</span>`).join('')}</div>
+                <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-faint);">v${esc(p.version)}</span>
+                ${p.user_id !== userId ? `<button class="page-btn" id="reportItemBtn" style="margin-left:auto;color:var(--red-alert);border-color:rgba(255,34,80,.3);font-size:9px;">⚑ Report</button>` : ''}
+              </div>
+              <button class="${btnClass}" id="detailBuyBtn">${btnLabel}</button>
+            </div>
+
+            ${thumbHtml}
+
+            <div class="detail-panel">
+              <div class="detail-panel__hd" style="display:flex;align-items:center;justify-content:space-between;">
+                <span>Description</span>
+                ${p.user_id === userId ? `<button class="page-btn" id="editDescBtn" style="font-size:9px;padding:3px 10px;">✎ Edit</button>` : ''}
+              </div>
+              <div class="detail-panel__body md-content" id="detailDesc"></div>
+              ${p.user_id === userId ? `
+              <div id="editDescForm" style="display:none;padding:12px 16px;border-top:1px solid var(--border);">
+                <textarea class="form-textarea" id="editDescInput" style="min-height:120px;margin-bottom:8px;">${esc(p.description||'')}</textarea>
+                <div style="font-size:11px;color:var(--text-faint);margin-bottom:8px;">Tip: paste a YouTube URL on its own line to embed a video.</div>
+                <button class="btn-submit" id="saveDescBtn">Save Description</button>
+              </div>` : ''}
+            </div>
+
+            ${tagsHtml ? `<div class="detail-panel"><div class="detail-panel__hd">Tags</div>${tagsHtml}</div>` : ''}
+
+            <div class="reviews-section" id="reviewsSection"></div>
+          </div>
+
+          <div>
+            <div class="detail-panel">
+              <div class="detail-panel__hd">Item Info</div>
+              <div class="detail-panel__body">
+                <div class="detail-info-row"><span class="detail-info-key">Author</span><span class="detail-info-val">${esc(p.username)}</span></div>
+                <div class="detail-info-row"><span class="detail-info-key">Version</span><span class="detail-info-val">${esc(p.version)}</span></div>
+                <div class="detail-info-row"><span class="detail-info-key">Type</span><span class="detail-info-val">${typeLabel(p)}</span></div>
+                <div class="detail-info-row"><span class="detail-info-key">Price</span><span class="detail-info-val">${p.price_ntc===0?'Free':p.price_ntc+' NTC'}</span></div>
+                <div class="detail-info-row"><span class="detail-info-key">Downloads</span><span class="detail-info-val">${p.download_count||0}</span></div>
+                <div class="detail-info-row"><span class="detail-info-key">File</span><span class="detail-info-val">${esc(p.file_name||'N/A')}</span></div>
+              </div>
+            </div>
+
+            <div class="detail-panel" id="changelogPanel">
+              <div class="detail-panel__hd" style="display:flex;align-items:center;justify-content:space-between;">
+                <span>Changelog</span>
+                ${p.user_id === userId ? `<button class="page-btn" id="addChangelogBtn" style="font-size:9px;padding:3px 10px;">+ Entry</button>` : ''}
+              </div>
+              <div id="changelogEntries"><div style="padding:12px 16px;font-family:var(--font-mono);font-size:10px;color:var(--text-faint);">Loading...</div></div>
+              ${p.user_id === userId ? `
+              <div id="changelogForm" style="display:none;padding:12px 16px;border-top:1px solid var(--border);">
+                <input class="form-input" id="clVersion" placeholder="Version (e.g. 1.2)" style="margin-bottom:8px;" />
+                <textarea class="form-textarea" id="clNotes" placeholder="What changed..." style="min-height:80px;margin-bottom:8px;"></textarea>
+                <button class="btn-submit" id="saveChangelogBtn">Post Update</button>
+              </div>` : ''}
+            </div>
+
+            ${(isAdmin||isMod) ? `
+            <div class="detail-panel" style="border-color:var(--violet-dim);">
+              <div class="detail-panel__hd" style="color:var(--violet);">Admin Actions</div>
+              <div class="detail-panel__body" style="display:flex;flex-direction:column;gap:8px;">
+                <button class="btn-submit" id="adminFeatureBtn" style="width:100%;background:var(--bg-elevated);color:var(--text-dim);border:1px solid var(--border);">${p.is_featured?'Unfeature':'Feature'}</button>
+                <button class="btn-submit" id="adminDeleteBtn" style="width:100%;background:rgba(255,34,80,.1);color:var(--red-alert);">Remove Item</button>
+              </div>
+            </div>` : ''}
+          </div>
+        </div>`;
+
+      // Render description with video embed support
+      renderDescription(p.description || '', 'detailDesc');
+
+      // Edit description toggle (owner only)
+      const editDescBtn = document.getElementById('editDescBtn');
+      const editDescForm = document.getElementById('editDescForm');
+      const saveDescBtn = document.getElementById('saveDescBtn');
+      if (editDescBtn && editDescForm) {
+        editDescBtn.addEventListener('click', () => {
+          editDescForm.style.display = editDescForm.style.display === 'none' ? 'block' : 'none';
+        });
+      }
+      if (saveDescBtn) {
+        saveDescBtn.addEventListener('click', async () => {
+          const newDesc = document.getElementById('editDescInput').value.trim();
+          if (!newDesc) return;
+          saveDescBtn.disabled = true; saveDescBtn.textContent = 'Saving...';
+          const { error } = await supabase.from('plugins').update({ description: newDesc }).eq('id', p.id).eq('user_id', userId);
+          saveDescBtn.disabled = false; saveDescBtn.textContent = 'Save Description';
+          if (error) { showToast('Failed: ' + error.message, true); return; }
+          p.description = newDesc;
+          renderDescription(newDesc, 'detailDesc');
+          editDescForm.style.display = 'none';
+          showToast('Description updated');
+          // update local
+          const idx = allItems.findIndex(x => String(x.id) === String(p.id));
+          if (idx >= 0) allItems[idx].description = newDesc;
+        });
+      }
+
+      // Report button
+      const reportBtn = document.getElementById('reportItemBtn');
+      if (reportBtn) {
+        reportBtn.addEventListener('click', async () => {
+          const reason = prompt('Reason for reporting this item:');
+          if (!reason) return;
+          await supabase.from('reports').insert({ plugin_id: p.id, reporter_id: userId, reason, plugin_title: p.title, seller_username: p.username });
+          showToast('Report submitted — our team will review it.');
+          reportBtn.textContent = '⚑ Reported'; reportBtn.disabled = true;
+        });
+      }
+
+      // Buy / download
+      document.getElementById('detailBuyBtn').addEventListener('click', () => handleBuy(p, isPremium));
+
+      // Admin actions
+      if (isAdmin || isMod) {
+        document.getElementById('adminFeatureBtn').addEventListener('click', async () => {
+          await supabase.from('plugins').update({ is_featured: !p.is_featured }).eq('id', p.id);
+          showToast(p.is_featured ? 'Unfeatured' : 'Featured');
+          loadItems();
+        });
+        document.getElementById('adminDeleteBtn').addEventListener('click', async () => {
+          if (!confirm('Remove this item?')) return;
+          await supabase.from('plugins').update({ is_deleted: true }).eq('id', p.id);
+          showToast('Item removed');
+          document.getElementById('backBtn').click();
+          loadItems();
+        });
+      }
+
+      // Changelog
+      const addChangelogBtn = document.getElementById('addChangelogBtn');
+      const changelogForm = document.getElementById('changelogForm');
+      const saveChangelogBtn = document.getElementById('saveChangelogBtn');
+      if (addChangelogBtn && changelogForm) {
+        addChangelogBtn.addEventListener('click', () => {
+          changelogForm.style.display = changelogForm.style.display === 'none' ? 'block' : 'none';
+        });
+      }
+      if (saveChangelogBtn) {
+        saveChangelogBtn.addEventListener('click', async () => {
+          const version = document.getElementById('clVersion').value.trim();
+          const notes = document.getElementById('clNotes').value.trim();
+          if (!version || !notes) { showToast('Version and notes required', true); return; }
+          saveChangelogBtn.disabled = true; saveChangelogBtn.textContent = 'Posting...';
+          const { error } = await supabase.from('changelogs').insert({ plugin_id: p.id, user_id: userId, version, notes });
+          saveChangelogBtn.disabled = false; saveChangelogBtn.textContent = 'Post Update';
+          if (error) { showToast('Failed: ' + error.message, true); return; }
+          document.getElementById('clVersion').value = '';
+          document.getElementById('clNotes').value = '';
+          changelogForm.style.display = 'none';
+          showToast('Changelog posted');
+          loadChangelog(p.id);
+          // Update version on plugin
+          await supabase.from('plugins').update({ version }).eq('id', p.id).eq('user_id', userId);
+        });
+      }
+
+      loadChangelog(p.id);
+      loadReviews(p.id, p, owned);
+    }
+
+    function renderDescription(desc, targetId) {
+      const el = document.getElementById(targetId);
+      if (!el) return;
+      // Convert YouTube URLs to embeds
+      const withEmbeds = desc.replace(
+        /(?:^|\n)(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})[^\s]*)/gm,
+        (match, url, id) => `\n<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:12px 0;"><iframe src="https://www.youtube.com/embed/${id}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:1px solid var(--border);" allowfullscreen></iframe></div>`
+      );
+      el.innerHTML = marked.parse(withEmbeds);
+    }
+
+    async function loadChangelog(pluginId) {
+      const { data: entries } = await supabase.from('changelogs').select('*').eq('plugin_id', pluginId).order('created_at', { ascending: false });
+      const container = document.getElementById('changelogEntries');
+      if (!container) return;
+      if (!entries || !entries.length) {
+        container.innerHTML = '<div style="padding:12px 16px;font-family:var(--font-mono);font-size:10px;color:var(--text-faint);">No changelog entries yet.</div>';
+        return;
+      }
+      container.innerHTML = entries.map(e => `
+        <div class="changelog-entry">
+          <div class="changelog-entry__version">v${esc(e.version)}</div>
+          <div class="changelog-entry__date">${new Date(e.created_at).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'})}</div>
+          <div class="changelog-entry__body">${esc(e.notes)}</div>
+        </div>`).join('');
+    }
+
+    // ── Reviews
+    async function loadReviews(pluginId, p, owned) {
+      const section = document.getElementById('reviewsSection');
+      if (!section) return;
+
+      const { data: reviews } = await supabase.from('plugin_reviews').select('*').eq('plugin_id', pluginId).order('created_at', { ascending: false });
+
+      const revHtml = reviews && reviews.length ? reviews.map(r => {
+        const isOwner = r.user_id === p.user_id;
+        return `<div class="review-card">
+          <div class="review-card__header">
+            <div class="review-card__avatar" style="display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--violet);">◈</div>
+            <div class="review-card__meta">
+              <div class="review-card__username">${esc(r.username)}</div>
+              <div class="review-card__stars">${[1,2,3,4,5].map(i=>`<span style="color:${i<=r.rating?'var(--yellow)':'var(--border-mid)'};">★</span>`).join('')}</div>
+              <div class="review-card__date">${new Date(r.created_at).toLocaleDateString()}</div>
+            </div>
+            <button class="review-card__report">⚑ Report</button>
+          </div>
+          <div class="review-card__body">
+            ${r.title?`<div class="review-card__title">${esc(r.title)}</div>`:''}
+            <div class="review-card__text">${esc(r.body||'')}</div>
+          </div>
+          ${r.author_reply?`<div class="review-card__reply"><div class="review-card__reply-label">Author's reply</div><div class="review-card__reply-text">${esc(r.author_reply)}</div></div>`:''}
+          ${(p.user_id===userId)&&!r.author_reply?`<div style="padding:0 16px 12px;"><button class="page-btn reply-btn" data-id="${r.id}">Reply to review</button></div>`:''}
+        </div>`;
+      }).join('') : '<div style="padding:16px;font-family:var(--font-mono);font-size:10px;color:var(--text-faint);">No reviews yet — be the first.</div>';
+
+      const canReview = owned && reviews && !reviews.find(r => r.user_id === userId);
+
+      section.innerHTML = `
+        <div class="section-hd">
+          <div class="section-hd__title">USER'S REVIEWS</div>
+          <div class="section-hd__line"></div>
+        </div>
+        ${revHtml}
+        ${canReview ? `
+        <div class="review-form">
+          <div class="review-form__title">POST REVIEW</div>
+          <div style="font-size:12px;color:var(--text-faint);margin-bottom:10px;">Your rating:</div>
+          <div class="star-selector" id="starSelector">
+            ${[1,2,3,4,5].map(i=>`<span class="star-pick" data-val="${i}">★</span>`).join('')}
+          </div>
+          <input class="form-input" id="revTitle" placeholder="Title" />
+          <textarea class="form-textarea" id="revBody" placeholder="Review..."></textarea>
+          <button class="btn-submit" id="submitReview">Submit Review</button>
+        </div>` : ''}`;
+
+      // Star picker
+      let selectedRating = 0;
+      section.querySelectorAll('.star-pick').forEach(star => {
+        star.addEventListener('mouseenter', () => {
+          section.querySelectorAll('.star-pick').forEach((s,i) => s.classList.toggle('active', i < parseInt(star.dataset.val)));
+        });
+        star.addEventListener('click', () => { selectedRating = parseInt(star.dataset.val); });
+      });
+
+      // Submit review
+      const submitBtn = document.getElementById('submitReview');
+      if (submitBtn) {
+        submitBtn.addEventListener('click', async () => {
+          const title = document.getElementById('revTitle').value.trim();
+          const body = document.getElementById('revBody').value.trim();
+          if (!selectedRating) { showToast('Select a rating', true); return; }
+          if (!body) { showToast('Write a review', true); return; }
+          submitBtn.disabled = true; submitBtn.textContent = 'Submitting...';
+          const { error } = await supabase.from('plugin_reviews').insert({ plugin_id: pluginId, user_id: userId, username, rating: selectedRating, title, body });
+          submitBtn.disabled = false; submitBtn.textContent = 'Submit Review';
+          if (error) { showToast('Failed: ' + error.message, true); return; }
+          showToast('Review posted!');
+          // Update avg rating
+          const allRatings = [...(reviews||[]).map(r=>r.rating), selectedRating];
+          const avg = allRatings.reduce((a,b)=>a+b,0)/allRatings.length;
+          await supabase.from('plugins').update({ avg_rating: Math.round(avg*10)/10 }).eq('id', pluginId);
+          loadReviews(pluginId, p, owned);
+        });
+      }
+
+      // Reply buttons
+      section.querySelectorAll('.reply-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const reply = prompt('Your reply:');
+          if (!reply) return;
+          await supabase.from('plugin_reviews').update({ author_reply: reply }).eq('id', btn.dataset.id);
+          showToast('Reply posted');
+          loadReviews(pluginId, p, owned);
+        });
+      });
+    }
+
+    // ── Buy / Download
+    async function handleBuy(p, isPremium) {
+      const owned = p.price_ntc === 0 || purchases.has(p.id) || p.user_id === userId;
+      if (owned) { downloadItem(p); return; }
+
+      // License gate — non-premium cannot buy paid items
+      if (!isPremium && p.price_ntc > 0) {
+        showToast('Premium license required to purchase items', true);
+        return;
+      }
+
+      if (p.user_id === userId) {
+        purchases.add(p.id);
+        const btn = document.getElementById('detailBuyBtn');
+        if (btn) { btn.textContent = 'Download'; btn.className = 'detail-buy-btn owned'; }
+        downloadItem(p);
+        return;
+      }
+
+      if (walletBalance < p.price_ntc) { showToast('Insufficient NTC balance', true); return; }
+
+      const newBal = walletBalance - p.price_ntc;
+      await supabase.from('wallets').update({ balance: newBal, updated_at: new Date().toISOString() }).eq('user_id', userId);
+      await supabase.from('transactions').insert({ user_id: userId, amount: -p.price_ntc, balance_after: newBal, type: 'purchase_plugin', description: 'Purchased: ' + p.title, reference_id: p.id });
+
+      // Credit seller
+      if (p.user_id !== userId) {
+        const { data: sw } = await supabase.from('wallets').select('balance').eq('user_id', p.user_id).single();
+        const sellerBal = (sw?.balance ?? 0) + p.price_ntc;
+        await supabase.from('wallets').update({ balance: sellerBal, updated_at: new Date().toISOString() }).eq('user_id', p.user_id);
+        await supabase.from('transactions').insert({ user_id: p.user_id, amount: p.price_ntc, balance_after: sellerBal, type: 'earn_other', description: 'Sale: ' + p.title, reference_id: p.id });
+        await supabase.from('notifications').insert({ user_id: p.user_id, type: 'plugin_purchase', title: 'Item sold!', body: `${username} purchased "${p.title}" for ${p.price_ntc} NTC`, link_type: 'plugin', link_id: p.id });
+      }
+
+      await supabase.from('plugin_purchases').insert({ user_id: userId, plugin_id: p.id, price_paid: p.price_ntc });
+      await supabase.from('plugins').update({ download_count: (p.download_count||0)+1 }).eq('id', p.id);
+
+      walletBalance = newBal;
+      document.getElementById('sidebarBal').textContent = walletBalance;
+      purchases.add(p.id);
+      showToast(`Purchased "${p.title}" for ${p.price_ntc} NTC`);
+      const btn = document.getElementById('detailBuyBtn');
+      if (btn) { btn.textContent = 'Download'; btn.className = 'detail-buy-btn owned'; }
+      downloadItem(p);
+    }
+
+    async function downloadItem(p) {
+      if (!p.file_url) { showToast('No file attached', true); return; }
+      const { data, error } = await supabase.storage.from('plugins').createSignedUrl(p.file_url, 60);
+      if (error) { showToast('Download error: ' + error.message, true); return; }
+      const a = document.createElement('a'); a.href = data.signedUrl; a.download = p.file_name || 'item'; a.click();
+      showToast('Download started');
+    }
+
+    // Back
+    document.getElementById('backBtn').addEventListener('click', () => {
+      document.getElementById('detailView').classList.remove('open');
+      document.getElementById('listView').classList.remove('hidden');
+    });
+
+    // Filters
+    document.querySelectorAll('.filter-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active'); currentType = btn.dataset.type; currentPage = 0; renderList();
+        document.querySelectorAll('.sidebar-link[data-filter]').forEach(b => b.classList.toggle('active', b.dataset.filter === currentType));
+      });
+    });
+    document.querySelectorAll('.sidebar-link[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sidebar-link[data-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active'); currentType = btn.dataset.filter; currentPage = 0; renderList();
+        document.querySelectorAll('.filter-tab').forEach(b => b.classList.toggle('active', b.dataset.type === currentType));
+      });
+    });
+    document.querySelectorAll('.price-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.price-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active'); currentPrice = btn.dataset.price; currentPage = 0; renderList();
+      });
+    });
+    document.getElementById('searchInput').addEventListener('input', e => { searchQuery = e.target.value.toLowerCase(); currentPage = 0; renderList(); });
+    document.getElementById('sortSelect').addEventListener('change', e => { currentSort = e.target.value; renderList(); });
+
+    // Upload (admin/mod)
+    const sidebarUploadBtn = document.getElementById('sidebarUploadBtn');
+    if (sidebarUploadBtn) sidebarUploadBtn.addEventListener('click', () => document.getElementById('uploadPanel').classList.toggle('visible'));
+    document.getElementById('closeUploadBtn').addEventListener('click', () => document.getElementById('uploadPanel').classList.remove('visible'));
+
+    let selFile = null, selThumb = null;
+    document.getElementById('fileDrop').addEventListener('click', () => document.getElementById('upFile').click());
+    document.getElementById('upFile').addEventListener('change', e => { selFile = e.target.files[0]; document.getElementById('fileLabel').textContent = selFile?.name||''; });
+    document.getElementById('thumbDrop').addEventListener('click', () => document.getElementById('upThumb').click());
+    document.getElementById('upThumb').addEventListener('change', e => { selThumb = e.target.files[0]; document.getElementById('thumbLabel').textContent = selThumb?.name||''; });
+
+    document.getElementById('upSubmitBtn').addEventListener('click', async () => {
+      const title = document.getElementById('upTitle').value.trim();
+      const version = document.getElementById('upVersion').value.trim() || '1.0';
+      const desc = document.getElementById('upDesc').value.trim();
+      const type = document.getElementById('upType').value;
+      const flair = document.getElementById('upFlair').value;
+      const price = parseInt(document.getElementById('upPrice').value) || 0;
+      const tags = document.getElementById('upTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+      const errEl = document.getElementById('upErr');
+      const btn = document.getElementById('upSubmitBtn');
+      errEl.classList.remove('show');
+      if (!title || !desc) { errEl.textContent = 'Title and description required.'; errEl.classList.add('show'); return; }
+      btn.disabled = true; btn.textContent = 'Publishing...';
+
+      let file_url = null, file_name = null, file_type = type, thumbnail_url = null;
+      if (selFile) {
+        const path = `${userId}/${Date.now()}_${selFile.name}`;
+        const { data: fd, error: fe } = await supabase.storage.from('plugins').upload(path, selFile);
+        if (fe) { errEl.textContent = 'Upload failed: '+fe.message; errEl.classList.add('show'); btn.disabled=false; btn.textContent='Publish Item'; return; }
+        file_url = fd.path; file_name = selFile.name;
+      }
+      if (selThumb) {
+        const tp = `thumbs/${userId}/${Date.now()}_${selThumb.name}`;
+        const { data: td } = await supabase.storage.from('plugins').upload(tp, selThumb);
+        if (td) { const { data: ud } = await supabase.storage.from('plugins').getPublicUrl(td.path); thumbnail_url = ud?.publicUrl || null; }
+      }
+
+      const { error } = await supabase.from('plugins').insert({ user_id: userId, username, title, description: desc, version, price_ntc: price, flair, file_url, file_name, file_type: type, thumbnail_url, download_count: 0, is_featured: false, is_deleted: false, tags });
+      btn.disabled=false; btn.textContent='Publish Item';
+      if (error) { errEl.textContent='Failed: '+error.message; errEl.classList.add('show'); return; }
+      ['upTitle','upVersion','upDesc','upPrice','upTags'].forEach(id => document.getElementById(id).value='');
+      selFile=null; selThumb=null;
+      document.getElementById('fileLabel').textContent='';
+      document.getElementById('thumbLabel').textContent='';
+      document.getElementById('uploadPanel').classList.remove('visible');
+      showToast('Item published!');
+      loadItems();
+    });
+
+    // Lightbox
+    document.getElementById('lightbox').addEventListener('click', () => document.getElementById('lightbox').classList.remove('open'));
+
+    function showToast(msg, err=false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = 'toast show' + (err?' err':'');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    await loadItems();
+  </script>
+</body>
+</html>

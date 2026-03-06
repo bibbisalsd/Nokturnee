@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Updates — Nokturne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <style>
+    body { padding-top: var(--nav-height); }
+    .page-tabs { display:flex;align-items:center;justify-content:center;background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:var(--nav-height);z-index:50; }
+    .page-tab { padding:14px 32px;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-faint);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;margin-bottom:-1px; }
+    .page-tab:hover { color:var(--text-dim); }
+    .page-tab.active { color:var(--violet);border-bottom-color:var(--violet); }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+    .cl-page { max-width:940px;margin:0 auto;padding:36px 24px 80px; }
+    .admin-bar { display:flex;align-items:center;gap:10px;margin-bottom:28px; }
+    .btn-admin { padding:9px 22px;background:var(--violet-faint);border:1px solid var(--violet-dim);color:var(--violet);font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);transition:background .18s; }
+    .btn-admin:hover { background:rgba(155,48,255,.18); }
+    .compose-panel { display:none;background:var(--bg-surface);border:1px solid var(--border-mid);clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));overflow:hidden;margin-bottom:24px; }
+    .compose-panel.open { display:block; }
+    .compose-panel__hd { padding:10px 18px;border-bottom:1px solid var(--border);background:var(--violet-faint);display:flex;align-items:center;justify-content:space-between;font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--violet); }
+    .compose-panel__body { padding:18px; }
+    .cl-form-row { display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap; }
+    .cl-input { flex:1;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 14px;outline:none;min-width:0;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);transition:border-color .2s; }
+    .cl-input:focus { border-color:var(--violet-dim); }
+    .cl-input::placeholder { color:var(--text-faint); }
+    .cl-textarea { width:100%;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;font-weight:300;padding:10px 14px;outline:none;resize:vertical;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);transition:border-color .2s;min-height:80px;margin-bottom:12px;box-sizing:border-box; }
+    .cl-textarea:focus { border-color:var(--violet-dim); }
+    .cl-textarea::placeholder { color:var(--text-faint); }
+    .compose-actions { display:flex;justify-content:flex-end;gap:10px; }
+    .btn-publish { padding:10px 28px;background:var(--violet);border:none;color:#fff;font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);transition:background .18s; }
+    .btn-publish:hover { background:#7B18DF; }
+    .btn-publish:disabled { opacity:.45;cursor:not-allowed; }
+    .modules-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:20px 0 0; }
+    .mod-card { background:var(--bg-elevated);border:1px solid var(--border);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));padding:16px;position:relative;transition:border-color .18s; }
+    .mod-card:hover { border-color:var(--border-mid); }
+    .mod-card__num { position:absolute;top:-1px;left:-1px;background:var(--violet);color:#fff;font-family:var(--font-display);font-size:10px;letter-spacing:.12em;padding:1px 8px;clip-path:polygon(0 0,100% 0,calc(100% - 4px) 100%,0 100%); }
+    .mod-card__top { margin-top:14px;margin-bottom:6px; }
+    .mod-card__id { font-family:var(--font-mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--violet); }
+    .mod-card__id-dot { color:var(--text-faint); }
+    .mod-card__name { font-family:var(--font-display);font-size:16px;letter-spacing:.08em;color:var(--text);margin-bottom:8px;line-height:1.2; }
+    .mod-card__divider { height:1px;background:var(--border);margin-bottom:8px; }
+    .mod-card__desc { font-size:11px;font-weight:300;color:var(--text-dim);line-height:1.65; }
+    .mod-card__admin-actions { display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border); }
+    .mod-btn { padding:4px 10px;background:none;border:1px solid var(--border);color:var(--text-faint);font-family:var(--font-mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%);transition:all .15s; }
+    .mod-btn:hover { border-color:var(--violet-dim);color:var(--violet); }
+    .mod-btn.del:hover { border-color:rgba(255,34,80,.4);color:var(--red-alert); }
+    .mod-edit-form { background:var(--bg-surface);border:1px solid var(--violet-dim);padding:12px;margin-top:8px;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%); }
+    .version-section { margin-bottom:8px; }
+    .version-header { display:flex;align-items:center;gap:12px;padding:15px 20px;background:var(--bg-surface);border:1px solid var(--border);border-left:3px solid var(--border-mid);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));cursor:pointer;transition:background .15s;user-select:none; }
+    .version-header:hover { background:var(--bg-elevated); }
+    .version-section.open .version-header { border-left-color:var(--violet); }
+    .vh-name { font-family:var(--font-display);font-size:17px;letter-spacing:.1em;color:var(--text-dim); }
+    .version-section.open .vh-name { color:var(--cyan); }
+    .vh-date { font-family:var(--font-mono);font-size:9px;color:var(--text-faint);letter-spacing:.12em;margin-left:auto; }
+    .vh-count { font-family:var(--font-mono);font-size:9px;color:var(--text-faint);letter-spacing:.14em; }
+    .vh-chevron { font-size:9px;color:var(--text-faint);transition:transform .2s;flex-shrink:0; }
+    .version-section.open .vh-chevron { transform:rotate(180deg); }
+    .version-content { display:none;padding:0 0 16px; }
+    .version-section.open .version-content { display:block; }
+    .latest-update { margin-bottom:20px; }
+    .latest-header { display:flex;align-items:center;gap:14px;padding:16px 22px;background:var(--bg-surface);border:1px solid var(--border);border-left:3px solid var(--cyan);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px)); }
+    .latest-badge { font-family:var(--font-mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;padding:2px 10px;color:var(--cyan);border:1px solid var(--cyan-dim);background:var(--cyan-faint);clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%); }
+    .latest-body { padding:16px 0 0; }
+    .body-text { font-size:13px;font-weight:300;color:var(--text-dim);line-height:1.8;margin-bottom:8px; }
+    .body-text h1,.body-text h2,.body-text h3 { font-family:var(--font-body);color:var(--text);margin:14px 0 6px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.08em; }
+    .body-text ul { padding-left:18px;list-style:disc; }
+    .body-text li { margin-bottom:4px; }
+    .body-text code { font-family:var(--font-mono);font-size:11px;background:var(--bg-elevated);border:1px solid var(--border);padding:1px 6px;color:var(--cyan); }
+    .cl-reactions { display:flex;gap:6px;flex-wrap:wrap;padding:12px 0 4px; }
+    .reaction-btn { display:flex;align-items:center;gap:4px;padding:4px 10px;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text-dim);font-family:var(--font-mono);font-size:10px;cursor:pointer;clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%);transition:all .15s; }
+    .reaction-btn:hover { border-color:var(--border-mid); }
+    .reaction-btn.reacted { border-color:var(--violet-dim);background:var(--violet-faint); }
+    .reaction-btn__count { color:var(--text-faint);font-size:9px; }
+    .features-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px; }
+    .feat-card { background:var(--bg-surface);border:1px solid var(--border);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));padding:20px;transition:border-color .18s,box-shadow .2s;position:relative; }
+    .feat-card:hover { border-color:var(--border-mid);box-shadow:0 4px 20px rgba(0,0,0,.4); }
+    .feat-card__icon { font-size:26px;margin-bottom:12px;line-height:1; }
+    .feat-card__title { font-family:var(--font-display);font-size:17px;letter-spacing:.1em;color:var(--text);margin-bottom:8px; }
+    .feat-card__divider { height:1px;background:linear-gradient(90deg,var(--violet-dim),transparent);margin-bottom:10px; }
+    .feat-card__desc { font-size:12px;font-weight:300;color:var(--text-dim);line-height:1.7; }
+    .feat-card__admin { display:flex;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border); }
+    .feat-move-btn { padding:4px 8px;background:none;border:1px solid var(--border);color:var(--text-faint);font-size:10px;cursor:pointer;clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%);transition:all .15s; }
+    .feat-move-btn:hover { border-color:var(--border-mid);color:var(--text-dim); }
+    .feat-move-btn:disabled { opacity:.3;cursor:not-allowed; }
+    .feat-add-panel { background:var(--bg-surface);border:1px solid var(--border-mid);clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));overflow:hidden;margin-bottom:24px;display:none; }
+    .feat-add-panel.open { display:block; }
+    .toast { position:fixed;bottom:28px;right:28px;z-index:9999;padding:10px 20px;background:var(--bg-elevated);border:1px solid var(--violet-dim);clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--violet);display:none; }
+    .toast.show { display:block; }
+    .toast.err { color:var(--red-alert);border-color:rgba(255,34,80,.4); }
+    .cl-gate { text-align:center;padding:80px 24px;border:1px solid var(--violet-dim);background:var(--violet-faint);clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px)); }
+    .cl-gate__title { font-family:var(--font-display);font-size:26px;letter-spacing:.1em;color:var(--text);margin:16px 0 10px; }
+    .cl-gate__sub { font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;color:var(--text-dim);line-height:1.8;margin-bottom:24px; }
+    .cl-loading { text-align:center;padding:60px;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;color:var(--text-faint);text-transform:uppercase; }
+    .cl-empty { text-align:center;padding:60px;font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;color:var(--text-faint); }
+    .slot-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px; }
+    .slot-box { background:var(--bg-elevated);border:1px solid var(--border);padding:10px;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%); }
+    .slot-label { font-family:var(--font-mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);margin-bottom:6px; }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"></div>
+
+  <div class="page-banner">
+    <div class="page-banner__bg" aria-hidden="true"></div>
+    <div class="container page-banner__inner">
+      <div class="t-label"><span class="t-label-line"></span>Members Area</div>
+      <h1 class="t-heading">NOKTURNE <span class="accent-violet">UPDATES</span></h1>
+      <p class="t-body">Platform features, system modules, and every update from the team.</p>
+    </div>
+  </div>
+
+  <div class="page-tabs">
+    <button class="page-tab active" data-page="features">Features</button>
+    <button class="page-tab" data-page="updates">Updates</button>
+  </div>
+
+  <main class="section">
+    <div class="cl-page">
+
+      <div id="gateWrap" style="display:none;">
+        <div class="cl-gate">
+          <div style="font-size:32px;">🔒</div>
+          <div class="cl-gate__title">MEMBERS ONLY</div>
+          <div class="cl-gate__sub">Log in to access platform updates and features.</div>
+          <a href="login.html" class="btn btn-primary" style="padding:14px 40px;font-size:11px;">Log In</a>
+        </div>
+      </div>
+
+      <!-- FEATURES TAB -->
+      <div class="tab-panel active" id="panel-features">
+        <div class="admin-bar" id="featAdminBar" style="display:none;">
+          <button class="btn-admin" id="featAddBtn">+ Add Feature</button>
+        </div>
+        <div class="feat-add-panel" id="featAddPanel">
+          <div class="compose-panel__hd">
+            <span id="featPanelTitle">New Feature</span>
+            <button id="featAddClose" style="background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:16px;">✕</button>
+          </div>
+          <div class="compose-panel__body">
+            <input type="hidden" id="featEditId" />
+            <div class="cl-form-row">
+              <input class="cl-input" id="featIcon" placeholder="Icon emoji" style="max-width:80px;" />
+              <input class="cl-input" id="featTitle" placeholder="Feature title" />
+            </div>
+            <textarea class="cl-textarea" id="featDesc" placeholder="Description..."></textarea>
+            <div class="compose-actions">
+              <button class="btn-publish" id="featSaveBtn">Save Feature</button>
+            </div>
+          </div>
+        </div>
+        <div class="features-grid" id="featuresGrid">
+          <div class="cl-loading">Loading features...</div>
+        </div>
+      </div>
+
+      <!-- UPDATES TAB -->
+      <div class="tab-panel" id="panel-updates">
+        <div class="admin-bar" id="updAdminBar" style="display:none;">
+          <button class="btn-admin" id="updAddBtn">+ Post Update</button>
+        </div>
+        <div class="compose-panel" id="updComposePanel">
+          <div class="compose-panel__hd">
+            <span>New Update</span>
+            <button id="updComposeClose" style="background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:16px;">✕</button>
+          </div>
+          <div class="compose-panel__body">
+            <div class="cl-form-row">
+              <input class="cl-input" id="inVersion" placeholder="Version (e.g. v2.5.0)" style="max-width:160px;" />
+              <input class="cl-input" id="inTitle" placeholder="Update title..." />
+            </div>
+            <textarea class="cl-textarea" id="inBody" placeholder="Release notes... (markdown supported)"></textarea>
+            <div class="slot-label" style="margin-bottom:10px;">MODULE SLOTS — up to 6 modules shipped in this update</div>
+            <div class="slot-grid" id="moduleSlots"></div>
+            <div class="compose-actions">
+              <button class="btn-publish" id="updPublishBtn">Publish Update</button>
+            </div>
+          </div>
+        </div>
+        <div id="updList"><div class="cl-loading">Loading updates...</div></div>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    import { renderNavbar, renderFooter } from '../assets/js/modules/layout.js';
+    import { initNavbar }   from '../assets/js/modules/navbar.js';
+    import { initReveal }   from '../assets/js/modules/reveal.js';
+    import { marked }       from 'https://cdn.jsdelivr.net/npm/marked@9.1.6/+esm';
+
+    const SUPABASE_URL = 'https://mmovqnaeozhzzeazrgdm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_CPoq9v6zAGVfRH4scFbxcA_gMRX4FJs';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    renderNavbar('../', 'changelog');
+    renderFooter('../');
+    initNavbar();
+    initReveal();
+
+    const EMOJIS = ['🔥','🚀','💯','👀','❤️'];
+    const MOD_SLOTS = 6;
+
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId   = session?.user?.id   || null;
+    const username = session?.user?.user_metadata?.full_name || session?.user?.user_metadata?.user_name || 'Member';
+
+    let isAdmin = false, allUpdates = [], allFeatures = [];
+    let reactionsMap = {}, myReactions = {};
+
+    if (!userId) {
+      document.getElementById('gateWrap').style.display = 'block';
+      document.getElementById('panel-features').style.display = 'none';
+      document.getElementById('panel-updates').style.display = 'none';
+    } else {
+      const { data: roleData } = await supabase.from('user_roles').select('role').eq('user_id', userId).single();
+      isAdmin = ['admin','moderator'].includes(roleData?.role);
+      if (isAdmin) {
+        document.getElementById('featAdminBar').style.display = 'flex';
+        document.getElementById('updAdminBar').style.display = 'flex';
+      }
+      buildModuleSlots();
+      await Promise.all([loadFeatures(), loadUpdates()]);
+    }
+
+    // Tab switching
+    document.querySelectorAll('.page-tab').forEach(btn => btn.addEventListener('click', () => {
+      const p = btn.dataset.page;
+      document.querySelectorAll('.page-tab').forEach(b => b.classList.toggle('active', b.dataset.page === p));
+      document.querySelectorAll('.tab-panel').forEach(el => el.classList.toggle('active', el.id === 'panel-' + p));
+    }));
+
+    // ════════════════ FEATURES ════════════════
+    async function loadFeatures() {
+      const { data } = await supabase.from('features').select('*').order('sort_order', { ascending: true });
+      allFeatures = data || [];
+      renderFeatures();
+    }
+
+    function renderFeatures() {
+      const grid = document.getElementById('featuresGrid');
+      if (!allFeatures.length) { grid.innerHTML = '<div class="cl-empty" style="grid-column:1/-1;">No features listed yet.</div>'; return; }
+      grid.innerHTML = allFeatures.map((f, i) => `
+        <div class="feat-card">
+          <div class="feat-card__icon">${esc(f.icon||'⬡')}</div>
+          <div class="feat-card__title">${esc(f.title)}</div>
+          <div class="feat-card__divider"></div>
+          <div class="feat-card__desc">${esc(f.description||'')}</div>
+          ${isAdmin ? `<div class="feat-card__admin">
+            <button class="feat-move-btn" data-fid="${f.id}" data-dir="up" ${i===0?'disabled':''}>▲</button>
+            <button class="feat-move-btn" data-fid="${f.id}" data-dir="down" ${i===allFeatures.length-1?'disabled':''}>▼</button>
+            <button class="mod-btn" data-fedit="${f.id}" style="margin-left:auto;">Edit</button>
+            <button class="mod-btn del" data-fdel="${f.id}">Remove</button>
+          </div>` : ''}
+        </div>`).join('');
+
+      if (isAdmin) {
+        grid.querySelectorAll('[data-fedit]').forEach(b => b.addEventListener('click', () => openFeatEdit(b.dataset.fedit)));
+        grid.querySelectorAll('[data-fdel]').forEach(b => b.addEventListener('click', () => deleteFeat(b.dataset.fdel)));
+        grid.querySelectorAll('[data-fid][data-dir]').forEach(b => b.addEventListener('click', () => moveFeat(b.dataset.fid, b.dataset.dir)));
+      }
+    }
+
+    document.getElementById('featAddBtn')?.addEventListener('click', () => {
+      ['featEditId','featIcon','featTitle','featDesc'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+      document.getElementById('featPanelTitle').textContent = 'New Feature';
+      document.getElementById('featAddPanel').classList.add('open');
+    });
+    document.getElementById('featAddClose')?.addEventListener('click', () => document.getElementById('featAddPanel').classList.remove('open'));
+
+    function openFeatEdit(id) {
+      const f = allFeatures.find(x => x.id === id); if (!f) return;
+      document.getElementById('featEditId').value = f.id;
+      document.getElementById('featIcon').value   = f.icon||'';
+      document.getElementById('featTitle').value  = f.title;
+      document.getElementById('featDesc').value   = f.description||'';
+      document.getElementById('featPanelTitle').textContent = 'Edit Feature';
+      document.getElementById('featAddPanel').classList.add('open');
+    }
+
+    document.getElementById('featSaveBtn')?.addEventListener('click', async () => {
+      const id    = document.getElementById('featEditId').value;
+      const icon  = document.getElementById('featIcon').value.trim()||'⬡';
+      const title = document.getElementById('featTitle').value.trim();
+      const desc  = document.getElementById('featDesc').value.trim();
+      const btn   = document.getElementById('featSaveBtn');
+      if (!title) { toast('Title required', true); return; }
+      btn.disabled = true; btn.textContent = 'Saving...';
+      try {
+        if (id) { await supabase.from('features').update({ icon, title, description: desc }).eq('id', id); }
+        else {
+          const maxOrd = allFeatures.length ? Math.max(...allFeatures.map(f=>f.sort_order||0))+1 : 0;
+          await supabase.from('features').insert({ icon, title, description: desc, sort_order: maxOrd });
+        }
+        document.getElementById('featAddPanel').classList.remove('open');
+        toast(id ? 'Feature updated' : 'Feature added');
+        await loadFeatures();
+      } catch(e) { toast('Error: '+e.message, true); }
+      btn.disabled = false; btn.textContent = 'Save Feature';
+    });
+
+    async function deleteFeat(id) {
+      if (!confirm('Remove this feature?')) return;
+      await supabase.from('features').delete().eq('id', id);
+      toast('Feature removed'); await loadFeatures();
+    }
+
+    async function moveFeat(id, dir) {
+      const idx = allFeatures.findIndex(f => f.id === id); if (idx < 0) return;
+      const swapIdx = dir === 'up' ? idx-1 : idx+1;
+      if (swapIdx < 0 || swapIdx >= allFeatures.length) return;
+      const a = allFeatures[idx], b = allFeatures[swapIdx];
+      await Promise.all([
+        supabase.from('features').update({ sort_order: b.sort_order }).eq('id', a.id),
+        supabase.from('features').update({ sort_order: a.sort_order }).eq('id', b.id),
+      ]);
+      await loadFeatures();
+    }
+
+    // ════════════════ UPDATES ════════════════
+    function buildModuleSlots() {
+      const c = document.getElementById('moduleSlots'); if (!c) return;
+      c.innerHTML = Array.from({length:MOD_SLOTS},(_,i) => `
+        <div class="slot-box">
+          <div class="slot-label">Module ${i+1}</div>
+          <input class="cl-input" id="ms-name-${i}" placeholder="Name" style="width:100%;margin-bottom:6px;" />
+          <input class="cl-input" id="ms-cat-${i}"  placeholder="Category" style="width:100%;margin-bottom:6px;" />
+          <textarea class="cl-textarea" id="ms-desc-${i}" placeholder="Description..." style="min-height:60px;margin-bottom:0;width:100%;"></textarea>
+        </div>`).join('');
+    }
+
+    document.getElementById('updAddBtn')?.addEventListener('click', () => document.getElementById('updComposePanel').classList.toggle('open'));
+    document.getElementById('updComposeClose')?.addEventListener('click', () => document.getElementById('updComposePanel').classList.remove('open'));
+
+    document.getElementById('updPublishBtn')?.addEventListener('click', async () => {
+      const version = document.getElementById('inVersion').value.trim();
+      const title   = document.getElementById('inTitle').value.trim();
+      const body    = document.getElementById('inBody').value.trim();
+      const btn     = document.getElementById('updPublishBtn');
+      if (!version) { toast('Version required', true); return; }
+      if (!title)   { toast('Title required', true); return; }
+
+      const modules = [];
+      for (let i = 0; i < MOD_SLOTS; i++) {
+        const name = document.getElementById(`ms-name-${i}`)?.value.trim();
+        const cat  = document.getElementById(`ms-cat-${i}`)?.value.trim();
+        const desc = document.getElementById(`ms-desc-${i}`)?.value.trim();
+        if (name) modules.push({ name, cat: cat||'SYSTEM', desc });
+      }
+
+      btn.disabled = true; btn.textContent = 'Publishing...';
+      try {
+        const { error } = await supabase.from('bot_changelog').insert({
+          user_id: userId, author: username, version, title, body, type: 'update', comment_count: 0, modules,
+        });
+        if (error) throw error;
+        ['inVersion','inTitle','inBody'].forEach(id => document.getElementById(id).value = '');
+        for (let i=0;i<MOD_SLOTS;i++) ['ms-name-','ms-cat-','ms-desc-'].forEach(p => { const el=document.getElementById(p+i); if(el) el.value=''; });
+        document.getElementById('updComposePanel').classList.remove('open');
+        toast('Update published');
+        await loadUpdates();
+      } catch(e) { toast('Error: '+e.message, true); }
+      btn.disabled = false; btn.textContent = 'Publish Update';
+    });
+
+    async function loadUpdates() {
+      const { data, error } = await supabase.from('bot_changelog').select('*').order('created_at', { ascending: false });
+      if (error) { document.getElementById('updList').innerHTML = `<div class="cl-empty">Failed to load: ${esc(error.message)}</div>`; return; }
+      allUpdates = (data||[]).filter(u => u.type !== 'feature');
+
+      if (allUpdates.length) {
+        const ids = allUpdates.map(e => e.id);
+        const [rRes, myRRes] = await Promise.all([
+          supabase.from('changelog_reactions').select('entry_id,emoji,count').in('entry_id', ids),
+          userId ? supabase.from('changelog_reactions_users').select('entry_id,emoji').eq('user_id', userId).in('entry_id', ids) : { data: [] },
+        ]);
+        reactionsMap = {};
+        (rRes.data||[]).forEach(r => { if(!reactionsMap[r.entry_id]) reactionsMap[r.entry_id]={}; reactionsMap[r.entry_id][r.emoji]=r.count; });
+        myReactions = {};
+        (myRRes.data||[]).forEach(r => { if(!myReactions[r.entry_id]) myReactions[r.entry_id]=new Set(); myReactions[r.entry_id].add(r.emoji); });
+      }
+      renderUpdates();
+    }
+
+    function renderUpdates() {
+      const el = document.getElementById('updList');
+      if (!allUpdates.length) { el.innerHTML = '<div class="cl-empty">No updates yet.</div>'; return; }
+      const [latest, ...older] = allUpdates;
+      el.innerHTML = latestHTML(latest) + older.map(u => olderHTML(u)).join('');
+
+      el.querySelectorAll('.reaction-btn[data-entry]').forEach(b => b.addEventListener('click', () => toggleReaction(b.dataset.entry, b.dataset.emoji)));
+      el.querySelectorAll('[data-toggle]').forEach(h => h.addEventListener('click', () => {
+        const sec = document.getElementById('vs-'+h.dataset.toggle);
+        sec?.classList.toggle('open');
+      }));
+      if (isAdmin) {
+        el.querySelectorAll('[data-medit]').forEach(b => b.addEventListener('click', () => openModEdit(b.dataset.medit, b.dataset.midx)));
+        el.querySelectorAll('[data-udel]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); deleteUpdate(b.dataset.udel); }));
+      }
+    }
+
+    function reactBtns(u) {
+      const r = reactionsMap[u.id]||{}, myR = myReactions[u.id]||new Set();
+      return EMOJIS.map(e => `<button class="reaction-btn${myR.has(e)?' reacted':''}" data-entry="${u.id}" data-emoji="${e}">${e}<span class="reaction-btn__count">${r[e]||''}</span></button>`).join('');
+    }
+
+    function modCardsHTML(u, editable) {
+      const mods = Array.isArray(u.modules) ? u.modules : [];
+      const cards = mods.map((m,i) => `
+        <div class="mod-card">
+          <div class="mod-card__num">${i+1}</div>
+          <div class="mod-card__top"><span class="mod-card__id">MOD-${i+1} <span class="mod-card__id-dot">·</span> ${esc(m.cat||'SYSTEM')}</span></div>
+          <div class="mod-card__name">${esc(m.name)}</div>
+          <div class="mod-card__divider"></div>
+          <p class="mod-card__desc">${esc(m.desc||'')}</p>
+          ${editable&&isAdmin ? `<div class="mod-card__admin-actions"><button class="mod-btn" data-medit="${u.id}" data-midx="${i}">Edit</button></div>` : ''}
+        </div>`).join('');
+
+      const emptySlots = editable && isAdmin && mods.length < MOD_SLOTS
+        ? Array.from({length: MOD_SLOTS - mods.length}, (_,i) => `
+        <div class="mod-card" style="border-style:dashed;opacity:.5;">
+          <div class="mod-card__num">${mods.length+i+1}</div>
+          <div class="mod-card__top"><span class="mod-card__id">EMPTY SLOT</span></div>
+          <div class="mod-card__name" style="color:var(--text-faint);">—</div>
+          <div class="mod-card__divider"></div>
+          <p class="mod-card__desc" style="color:var(--text-faint);">Not filled</p>
+          <div class="mod-card__admin-actions"><button class="mod-btn" data-medit="${u.id}" data-midx="${mods.length+i}">Add</button></div>
+        </div>`).join('') : '';
+
+      return (cards||emptySlots) ? `<div class="modules-grid">${cards}${emptySlots}</div>` : '';
+    }
+
+    function latestHTML(u) {
+      return `<div class="latest-update">
+        <div class="latest-header">
+          <span style="font-family:var(--font-mono);font-size:13px;color:var(--cyan);">⬡</span>
+          <span style="font-family:var(--font-display);font-size:20px;letter-spacing:.12em;color:var(--cyan);">${esc(u.version)} — ${esc(u.title)}</span>
+          <span class="latest-badge">Latest</span>
+          <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-faint);margin-left:auto;">${formatDate(u.created_at)}</span>
+          ${isAdmin ? `<button class="mod-btn del" data-udel="${u.id}" style="margin-left:8px;">Delete</button>` : ''}
+        </div>
+        <div class="latest-body">
+          ${u.body ? `<div class="body-text">${marked.parse(u.body)}</div>` : ''}
+          ${modCardsHTML(u, true)}
+          <div class="cl-reactions">${reactBtns(u)}</div>
+        </div>
+      </div>`;
+    }
+
+    function olderHTML(u) {
+      const mods = Array.isArray(u.modules) ? u.modules : [];
+      return `<div class="version-section" id="vs-${u.id}">
+        <div class="version-header" data-toggle="${u.id}">
+          <span style="font-family:var(--font-mono);font-size:12px;color:var(--violet);">⬡</span>
+          <span class="vh-name">${esc(u.version)} — ${esc(u.title)}</span>
+          ${mods.length ? `<span class="vh-count">${mods.length} MODULE${mods.length!==1?'S':''}</span>` : ''}
+          <span class="vh-date">${formatDate(u.created_at)}</span>
+          ${isAdmin ? `<button class="mod-btn del" data-udel="${u.id}" style="margin-left:4px;">Delete</button>` : ''}
+          <span class="vh-chevron">▼</span>
+        </div>
+        <div class="version-content">
+          ${u.body ? `<div class="body-text" style="margin-bottom:12px;">${marked.parse(u.body)}</div>` : ''}
+          ${modCardsHTML(u, false)}
+          <div class="cl-reactions">${reactBtns(u)}</div>
+        </div>
+      </div>`;
+    }
+
+    // Inline module edit
+    function openModEdit(entryId, idx) {
+      const entry = allUpdates.find(u => u.id === entryId); if (!entry) return;
+      const mods = Array.isArray(entry.modules) ? [...entry.modules] : [];
+      const m = mods[idx] || { name:'', cat:'', desc:'' };
+      const fid = `mef-${entryId}-${idx}`;
+      const existing = document.getElementById(fid);
+      if (existing) { existing.remove(); return; }
+
+      const btn = document.querySelector(`[data-medit="${entryId}"][data-midx="${idx}"]`);
+      const card = btn?.closest('.mod-card'); if (!card) return;
+
+      const form = document.createElement('div');
+      form.id = fid; form.className = 'mod-edit-form';
+      form.innerHTML = `
+        <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--violet);margin-bottom:8px;">Edit Module ${parseInt(idx)+1}</div>
+        <div class="cl-form-row" style="margin-bottom:8px;">
+          <input class="cl-input" id="me-n-${fid}" value="${esc(m.name)}" placeholder="Name" />
+          <input class="cl-input" id="me-c-${fid}" value="${esc(m.cat||'')}" placeholder="Category" style="max-width:130px;" />
+        </div>
+        <textarea class="cl-textarea" id="me-d-${fid}" style="min-height:60px;margin-bottom:8px;">${esc(m.desc||'')}</textarea>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button class="mod-btn" id="me-sv-${fid}">Save</button>
+          <button class="mod-btn del" id="me-cx-${fid}">Cancel</button>
+        </div>`;
+      card.appendChild(form);
+
+      document.getElementById(`me-cx-${fid}`)?.addEventListener('click', () => form.remove());
+      document.getElementById(`me-sv-${fid}`)?.addEventListener('click', async () => {
+        const name = document.getElementById(`me-n-${fid}`).value.trim();
+        const cat  = document.getElementById(`me-c-${fid}`).value.trim();
+        const desc = document.getElementById(`me-d-${fid}`).value.trim();
+        if (!name) { toast('Name required', true); return; }
+        while (mods.length <= parseInt(idx)) mods.push({ name:'', cat:'SYSTEM', desc:'' });
+        mods[idx] = { name, cat: cat||'SYSTEM', desc };
+        const { error } = await supabase.from('bot_changelog').update({ modules: mods }).eq('id', entryId);
+        if (error) { toast('Save failed: '+error.message, true); return; }
+        const e2 = allUpdates.find(u => u.id === entryId);
+        if (e2) e2.modules = mods;
+        toast('Module saved');
+        renderUpdates();
+      });
+    }
+
+    // Reactions
+    async function toggleReaction(entryId, emoji) {
+      if (!userId) return;
+      const myR = myReactions[entryId] || new Set();
+      const already = myR.has(emoji);
+      if (already) {
+        await supabase.from('changelog_reactions_users').delete().eq('entry_id',entryId).eq('user_id',userId).eq('emoji',emoji);
+        const cur = reactionsMap[entryId]?.[emoji]||1;
+        if (cur<=1) { await supabase.from('changelog_reactions').delete().eq('entry_id',entryId).eq('emoji',emoji); if(reactionsMap[entryId]) delete reactionsMap[entryId][emoji]; }
+        else { await supabase.from('changelog_reactions').update({count:cur-1}).eq('entry_id',entryId).eq('emoji',emoji); if(!reactionsMap[entryId]) reactionsMap[entryId]={}; reactionsMap[entryId][emoji]=cur-1; }
+        myR.delete(emoji);
+      } else {
+        await supabase.from('changelog_reactions_users').insert({entry_id:entryId,user_id:userId,emoji});
+        const cur = reactionsMap[entryId]?.[emoji]||0;
+        if (cur===0) { await supabase.from('changelog_reactions').insert({entry_id:entryId,emoji,count:1}); }
+        else { await supabase.from('changelog_reactions').update({count:cur+1}).eq('entry_id',entryId).eq('emoji',emoji); }
+        if (!reactionsMap[entryId]) reactionsMap[entryId]={};
+        reactionsMap[entryId][emoji]=(cur||0)+1;
+        myR.add(emoji);
+      }
+      myReactions[entryId]=myR;
+      renderUpdates();
+    }
+
+    async function deleteUpdate(id) {
+      if (!confirm('Delete this update?')) return;
+      await supabase.from('bot_changelog').delete().eq('id', id);
+      allUpdates = allUpdates.filter(u => u.id !== id);
+      toast('Deleted');
+      renderUpdates();
+    }
+
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function formatDate(ts) { return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+    function toast(msg, err=false) {
+      const t = document.getElementById('toast');
+      t.textContent=msg; t.className='toast show'+(err?' err':'');
+      setTimeout(()=>t.classList.remove('show'),3000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Nokturne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <style>
+    .admin-wrap{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:start;padding:24px 0 80px;}
+    @media(max-width:800px){.admin-wrap{grid-template-columns:1fr;}}
+    .admin-nav{background:var(--bg-surface);border:1px solid var(--border);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));overflow:hidden;position:sticky;top:calc(var(--nav-height) + 20px);}
+    .admin-nav__hd{padding:10px 14px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);}
+    .admin-tab{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:none;border-bottom:1px solid var(--border);background:transparent;color:var(--text-dim);font-family:var(--font-body);font-size:12px;font-weight:500;cursor:pointer;text-align:left;transition:all .15s;}
+    .admin-tab:last-child{border-bottom:none;}
+    .admin-tab:hover{background:var(--bg-elevated);color:var(--text);}
+    .admin-tab.active{background:var(--violet-faint);color:var(--violet);border-left:2px solid var(--violet);padding-left:12px;}
+    .tab-content{display:none;}
+    .tab-content.active{display:block;}
+    .panel{background:var(--bg-surface);border:1px solid var(--border);clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));overflow:hidden;margin-bottom:16px;}
+    .panel__hd{padding:12px 18px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);display:flex;align-items:center;justify-content:space-between;}
+    .panel__body{padding:18px;}
+    .form-row{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+    .form-input{flex:1;min-width:140px;background:var(--bg-elevated);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 14px;outline:none;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);transition:border-color .2s;}
+    .form-input:focus{border-color:var(--violet-dim);}
+    .form-input::placeholder{color:var(--text-faint);}
+    .btn-action{padding:10px 20px;background:var(--violet);border:none;color:#fff;font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);transition:all .18s;white-space:nowrap;}
+    .btn-action:hover{background:#7B18DF;}
+    .btn-action:disabled{opacity:.5;cursor:not-allowed;}
+    .btn-danger{background:rgba(255,34,80,.15);color:var(--red-alert);border:1px solid rgba(255,34,80,.3);}
+    .btn-danger:hover{background:rgba(255,34,80,.25);}
+    .result-msg{font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;color:#39FF80;margin-top:8px;display:none;}
+    .result-msg.show{display:block;}
+    .result-msg.error{color:var(--red-alert);}
+    .user-table{width:100%;border-collapse:collapse;}
+    .user-table th{font-family:var(--font-mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-faint);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .user-table td{font-size:12px;padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text-dim);}
+    .user-table tr:last-child td{border-bottom:none;}
+    .user-table tr:hover td{background:var(--bg-elevated);}
+    .user-table .mono{font-family:var(--font-mono);font-size:10px;}
+    .badge{display:inline-block;font-family:var(--font-mono);font-size:8px;letter-spacing:0.16em;text-transform:uppercase;padding:2px 8px;clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%);border:1px solid;}
+    .badge-admin{color:var(--violet);border-color:var(--violet-dim);background:var(--violet-faint);}
+    .badge-member{color:var(--text-faint);border-color:var(--border-mid);background:var(--bg-elevated);}
+    .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+    @media(max-width:600px){.stat-grid{grid-template-columns:1fr;}}
+    .stat-card{background:var(--bg-surface);border:1px solid var(--border);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));padding:16px;}
+    .stat-card__val{font-family:var(--font-display);font-size:40px;letter-spacing:0.06em;color:var(--violet);line-height:1;}
+    .stat-card__key{font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);}
+    .txn-table{width:100%;border-collapse:collapse;}
+    .txn-table th{font-family:var(--font-mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-faint);text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .txn-table td{font-size:11px;padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text-dim);}
+    .txn-table tr:last-child td{border-bottom:none;}
+    .txn-pos{color:#39FF80;font-family:var(--font-mono);font-weight:700;}
+    .txn-neg{color:var(--red-alert);font-family:var(--font-mono);font-weight:700;}
+    .toast{position:fixed;bottom:24px;right:24px;z-index:400;padding:12px 20px;background:var(--bg-elevated);border:1px solid var(--violet-dim);clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;color:var(--violet);display:none;}
+    .toast.show{display:block;animation:slideUp .3s ease;}
+    .toast.error{color:var(--red-alert);border-color:var(--red-alert);}
+    @keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+    .access-denied{text-align:center;padding:80px 40px;font-family:var(--font-mono);font-size:14px;letter-spacing:0.2em;text-transform:uppercase;color:var(--red-alert);}
+  </style>
+</head>
+<body>
+  <div class="hero__lines" aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
+  <div class="page-banner">
+    <div class="page-banner__bg" aria-hidden="true"></div>
+    <div class="container page-banner__inner">
+      <div class="t-label"><span class="t-label-line"></span>Admin</div>
+      <h1 class="t-heading">ADMIN <span class="accent-violet">PANEL</span></h1>
+      <p class="t-body">Manage users, wallets, plugins, and platform settings.</p>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <main class="section" style="padding-top:0;">
+    <div class="container" id="mainContainer">
+      <div class="access-denied" id="accessDenied" style="display:none;">⛔ Access Denied — Admin only</div>
+      <div class="admin-wrap" id="adminWrap" style="display:none;">
+        <!-- Sidebar nav -->
+        <nav class="admin-nav">
+          <div class="admin-nav__hd">Admin</div>
+          <button class="admin-tab active" data-tab="overview">Overview</button>
+          <button class="admin-tab" data-tab="wallet">Wallets</button>
+          <button class="admin-tab" data-tab="users">Users</button>
+          <button class="admin-tab" data-tab="plugins">Plugins</button>
+          <button class="admin-tab" data-tab="txns">Transactions</button>
+          <button class="admin-tab" data-tab="reports">Reports <span id="reportsBadge" style="background:var(--red-alert);color:#fff;font-family:var(--font-mono);font-size:8px;padding:1px 5px;border-radius:3px;margin-left:4px;display:none;"></span></button>
+        </nav>
+        <!-- Content -->
+        <div>
+
+          <!-- Overview -->
+          <div class="tab-content active" id="tab-overview">
+            <div class="stat-grid" id="statGrid">
+              <div class="stat-card"><div class="stat-card__val" id="statUsers">—</div><div class="stat-card__key">Total Users</div></div>
+              <div class="stat-card"><div class="stat-card__val" id="statPlugins">—</div><div class="stat-card__key">Plugins</div></div>
+              <div class="stat-card"><div class="stat-card__val" id="statTxns">—</div><div class="stat-card__key">Transactions</div></div>
+            </div>
+          </div>
+
+          <!-- Wallet management -->
+          <div class="tab-content" id="tab-wallet">
+            <div class="panel">
+              <div class="panel__hd">Grant / Deduct NTC</div>
+              <div class="panel__body">
+                <p style="font-size:12px;color:var(--text-dim);margin-bottom:16px;line-height:1.65;">Search a user by username or email, then grant or deduct NTC from their wallet. Positive amount = grant, negative = deduct.</p>
+                <div class="form-row">
+                  <input class="form-input" id="walletSearch" placeholder="Search username or email..." />
+                  <button class="btn-action" id="searchUserBtn">Search</button>
+                </div>
+                <div id="searchResults" style="margin-bottom:12px;"></div>
+                <div id="walletForm" style="display:none;">
+                  <div class="form-row">
+                    <input class="form-input" id="ntcAmount" type="number" placeholder="Amount (positive=grant, negative=deduct)" />
+                    <input class="form-input" id="ntcDesc" placeholder="Reason / note" />
+                  </div>
+                  <div class="form-row">
+                    <button class="btn-action" id="grantBtn">Grant NTC</button>
+                    <button class="btn-action btn-danger" id="deductBtn">Deduct NTC</button>
+                  </div>
+                </div>
+                <div class="result-msg" id="walletResult"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Users -->
+          <div class="tab-content" id="tab-users">
+            <div class="panel">
+              <div class="panel__hd"><span>All Users</span><button class="btn-action" id="loadUsersBtn" style="font-size:8px;padding:6px 12px;">Load</button></div>
+              <div class="panel__body" style="padding:0;overflow-x:auto;">
+                <table class="user-table">
+                  <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>NTC Balance</th></tr></thead>
+                  <tbody id="usersBody"><tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-faint);font-family:var(--font-mono);font-size:10px;">Click Load to fetch users</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Plugins admin -->
+          <div class="tab-content" id="tab-plugins">
+            <div class="panel">
+              <div class="panel__hd"><span>All Plugins</span><button class="btn-action" id="loadPluginsBtn" style="font-size:8px;padding:6px 12px;">Load</button></div>
+              <div class="panel__body" style="padding:0;overflow-x:auto;">
+                <table class="user-table">
+                  <thead><tr><th>Title</th><th>Author</th><th>Price</th><th>Downloads</th><th>Featured</th><th>Actions</th></tr></thead>
+                  <tbody id="pluginsBody"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-faint);font-family:var(--font-mono);font-size:10px;">Click Load</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transactions -->
+          <div class="tab-content" id="tab-txns">
+            <div class="panel">
+              <div class="panel__hd"><span>Recent Transactions</span><button class="btn-action" id="loadTxnsBtn" style="font-size:8px;padding:6px 12px;">Load</button></div>
+              <div class="panel__body" style="padding:0;overflow-x:auto;">
+                <table class="txn-table">
+                  <thead><tr><th>User</th><th>Type</th><th>Amount</th><th>Balance After</th><th>Description</th><th>Date</th></tr></thead>
+                  <tbody id="txnsBody"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-faint);font-family:var(--font-mono);font-size:10px;">Click Load</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reports -->
+          <div class="tab-content" id="tab-reports">
+            <div class="panel">
+              <div class="panel__hd"><span>Flagged Items</span><button class="btn-action" id="loadReportsBtn" style="font-size:8px;padding:6px 12px;">Load</button></div>
+              <div class="panel__body" style="padding:0;overflow-x:auto;">
+                <table class="user-table">
+                  <thead><tr><th>Item</th><th>Seller</th><th>Reporter</th><th>Reason</th><th>Date</th><th>Actions</th></tr></thead>
+                  <tbody id="reportsBody"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-faint);font-family:var(--font-mono);font-size:10px;">Click Load</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    import { renderNavbar, renderFooter } from '../assets/js/modules/layout.js';
+    import { initNavbar } from '../assets/js/modules/navbar.js';
+
+    const SUPABASE_URL = 'https://mmovqnaeozhzzeazrgdm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_CPoq9v6zAGVfRH4scFbxcA_gMRX4FJs';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    renderNavbar('../', '');
+    renderFooter('../');
+    initNavbar();
+    if (document.getElementById('year')) document.getElementById('year').textContent = new Date().getFullYear();
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; }
+
+    const userId = session.user.id;
+    const username = session.user.user_metadata?.full_name || session.user.user_metadata?.user_name || 'Admin';
+
+    // Check admin
+    const { data: roleData } = await supabase.from('user_roles').select('role').eq('user_id', userId).single();
+    const isAdmin = roleData?.role === 'admin';
+
+    if (!isAdmin) {
+      document.getElementById('accessDenied').style.display = 'block';
+    } else {
+      document.getElementById('adminWrap').style.display = 'grid';
+      loadOverview();
+    }
+
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function timeAgo(d) { const diff=Math.floor((Date.now()-new Date(d))/1000); if(diff<60)return diff+'s ago'; if(diff<3600)return Math.floor(diff/60)+'m ago'; if(diff<86400)return Math.floor(diff/3600)+'h ago'; return Math.floor(diff/86400)+'d ago'; }
+
+    // ── Tabs
+    document.querySelectorAll('.admin-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ── Overview
+    async function loadOverview() {
+      const [{ count: uCount }, { count: pCount }, { count: tCount }] = await Promise.all([
+        supabase.from('user_roles').select('*', { count: 'exact', head: true }),
+        supabase.from('plugins').select('*', { count: 'exact', head: true }).eq('is_deleted', false),
+        supabase.from('transactions').select('*', { count: 'exact', head: true }),
+      ]);
+      document.getElementById('statUsers').textContent = uCount ?? '—';
+      document.getElementById('statPlugins').textContent = pCount ?? '—';
+      document.getElementById('statTxns').textContent = tCount ?? '—';
+    }
+
+    // ── Wallet search
+    let targetUser = null;
+
+    document.getElementById('searchUserBtn').addEventListener('click', async () => {
+      const q = document.getElementById('walletSearch').value.trim();
+      if (!q) return;
+      const { data } = await supabase.from('profiles').select('id, username, email').or(`username.ilike.%${q}%,email.ilike.%${q}%`).limit(5);
+      const res = document.getElementById('searchResults');
+      if (!data || !data.length) { res.innerHTML = '<div style="font-family:var(--font-mono);font-size:10px;color:var(--text-faint);">No users found</div>'; document.getElementById('walletForm').style.display='none'; return; }
+      res.innerHTML = data.map(u => `<div class="user-row" data-id="${u.id}" data-name="${esc(u.username||'')}" style="padding:8px 12px;cursor:pointer;border:1px solid var(--border);margin-bottom:4px;background:var(--bg-elevated);clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);font-size:12px;display:flex;justify-content:space-between;"><span>${esc(u.username||'Unknown')}</span><span style="font-family:var(--font-mono);font-size:10px;color:var(--text-faint);">${esc(u.email||u.id)}</span></div>`).join('');
+      res.querySelectorAll('.user-row').forEach(row => {
+        row.addEventListener('click', async () => {
+          targetUser = { id: row.dataset.id, name: row.dataset.name };
+          res.querySelectorAll('.user-row').forEach(r => r.style.borderColor = 'var(--border)');
+          row.style.borderColor = 'var(--violet)';
+          const { data: w } = await supabase.from('wallets').select('balance').eq('user_id', targetUser.id).single();
+          document.getElementById('walletForm').style.display = 'block';
+          document.getElementById('walletResult').textContent = `Selected: ${targetUser.name} — Current balance: ${w?.balance ?? 0} NTC`;
+          document.getElementById('walletResult').className = 'result-msg show';
+        });
+      });
+    });
+
+    async function applyWalletChange(isGrant) {
+      if (!targetUser) { showToast('Select a user first', true); return; }
+      const amt = parseInt(document.getElementById('ntcAmount').value);
+      const desc = document.getElementById('ntcDesc').value.trim() || (isGrant ? 'Admin grant' : 'Admin deduction');
+      if (!amt || amt === 0) { showToast('Enter a non-zero amount', true); return; }
+
+      const { data: wallet } = await supabase.from('wallets').select('balance').eq('user_id', targetUser.id).single();
+      const currentBal = wallet?.balance ?? 0;
+      const change = isGrant ? Math.abs(amt) : -Math.abs(amt);
+      const newBal = Math.max(0, currentBal + change);
+
+      const { error } = await supabase.from('wallets').upsert({ user_id: targetUser.id, balance: newBal, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+      if (error) { showToast('Failed: ' + error.message, true); return; }
+
+      await supabase.from('transactions').insert({
+        user_id: targetUser.id, amount: change, balance_after: newBal,
+        type: isGrant ? 'admin_grant' : 'admin_deduct',
+        description: desc, created_by: userId
+      });
+
+      await supabase.from('notifications').insert({
+        user_id: targetUser.id, type: 'ntc_grant',
+        title: isGrant ? 'NTC Added to Wallet' : 'NTC Deducted',
+        body: `${isGrant ? '+' : ''}${change} NTC. Reason: ${desc}. New balance: ${newBal} NTC.`
+      });
+
+      showToast(`${isGrant?'Granted':'Deducted'} ${Math.abs(change)} NTC to ${targetUser.name}`);
+      document.getElementById('walletResult').textContent = `Done. New balance: ${newBal} NTC`;
+      document.getElementById('walletResult').className = 'result-msg show';
+    }
+
+    document.getElementById('grantBtn').addEventListener('click', () => applyWalletChange(true));
+    document.getElementById('deductBtn').addEventListener('click', () => applyWalletChange(false));
+
+    // ── Load users
+    document.getElementById('loadUsersBtn').addEventListener('click', async () => {
+      const { data: roles } = await supabase.from('user_roles').select('user_id, role');
+      const { data: wallets } = await supabase.from('wallets').select('user_id, balance');
+      const { data: profiles } = await supabase.from('profiles').select('id, username, email');
+      const walletMap = Object.fromEntries((wallets||[]).map(w => [w.user_id, w.balance]));
+      const profileMap = Object.fromEntries((profiles||[]).map(p => [p.id, p]));
+      const tbody = document.getElementById('usersBody');
+      if (!roles || !roles.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-faint);">No users</td></tr>'; return; }
+      tbody.innerHTML = roles.map(r => {
+        const p = profileMap[r.user_id] || {};
+        return `<tr>
+          <td>${esc(p.username||'Unknown')}</td>
+          <td class="mono">${esc(p.email||r.user_id.slice(0,8)+'...')}</td>
+          <td><span class="badge badge-${r.role}">${r.role}</span></td>
+          <td class="mono">${walletMap[r.user_id] ?? 0} NTC</td>
+        </tr>`;
+      }).join('');
+    });
+
+    // ── Load plugins admin view
+    document.getElementById('loadPluginsBtn').addEventListener('click', async () => {
+      const { data } = await supabase.from('plugins').select('*').eq('is_deleted', false).order('created_at', { ascending: false });
+      const tbody = document.getElementById('pluginsBody');
+      if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-faint);">No plugins</td></tr>'; return; }
+      tbody.innerHTML = data.map(p => `<tr>
+        <td>${esc(p.title)}</td>
+        <td class="mono">${esc(p.username)}</td>
+        <td class="mono">${p.price_ntc===0?'Free':p.price_ntc+' NTC'}</td>
+        <td class="mono">${p.download_count||0}</td>
+        <td><span class="badge ${p.is_featured?'badge-admin':'badge-member'}">${p.is_featured?'Yes':'No'}</span></td>
+        <td style="display:flex;gap:6px;">
+          <button class="btn-action" style="font-size:8px;padding:5px 10px;" data-feat="${p.id}" data-val="${p.is_featured}">${p.is_featured?'Unfeature':'Feature'}</button>
+          <button class="btn-action btn-danger" style="font-size:8px;padding:5px 10px;" data-del="${p.id}">Remove</button>
+        </td>
+      </tr>`).join('');
+      tbody.querySelectorAll('[data-feat]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const isFeat = btn.dataset.val === 'true';
+          await supabase.from('plugins').update({ is_featured: !isFeat }).eq('id', btn.dataset.feat);
+          showToast(isFeat ? 'Unfeatured' : 'Featured');
+          document.getElementById('loadPluginsBtn').click();
+        });
+      });
+      tbody.querySelectorAll('[data-del]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('Remove this plugin?')) return;
+          await supabase.from('plugins').update({ is_deleted: true }).eq('id', btn.dataset.del);
+          showToast('Plugin removed');
+          document.getElementById('loadPluginsBtn').click();
+        });
+      });
+    });
+
+    // ── Load transactions
+    document.getElementById('loadTxnsBtn').addEventListener('click', async () => {
+      const { data } = await supabase.from('transactions').select('*').order('created_at', { ascending: false }).limit(100);
+      const tbody = document.getElementById('txnsBody');
+      if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;">No transactions</td></tr>'; return; }
+      tbody.innerHTML = data.map(t => `<tr>
+        <td class="mono">${t.user_id.slice(0,8)}...</td>
+        <td class="mono">${esc(t.type)}</td>
+        <td class="${t.amount>=0?'txn-pos':'txn-neg'}">${t.amount>=0?'+':''}${t.amount}</td>
+        <td class="mono">${t.balance_after}</td>
+        <td style="color:var(--text-faint);font-size:11px;">${esc(t.description||'—')}</td>
+        <td class="mono" style="color:var(--text-faint);">${timeAgo(t.created_at)}</td>
+      </tr>`).join('');
+    });
+
+    document.getElementById('loadReportsBtn').addEventListener('click', async () => {
+      const { data } = await supabase.from('reports').select('*').order('created_at', { ascending: false });
+      const tbody = document.getElementById('reportsBody');
+      if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-faint);">No reports</td></tr>'; return; }
+      tbody.innerHTML = data.map(r => `<tr>
+        <td style="font-weight:600;">${esc(r.plugin_title||'Unknown')}</td>
+        <td class="mono">${esc(r.seller_username||'—')}</td>
+        <td class="mono">${r.reporter_id?.slice(0,8)||'—'}...</td>
+        <td style="color:var(--text-dim);font-size:11px;">${esc(r.reason||'—')}</td>
+        <td class="mono" style="color:var(--text-faint);">${timeAgo(r.created_at)}</td>
+        <td>
+          <button onclick="dismissReport('${r.id}')" style="background:none;border:1px solid var(--border);color:var(--text-faint);font-family:var(--font-mono);font-size:9px;padding:3px 8px;cursor:pointer;margin-right:4px;">Dismiss</button>
+          <button onclick="removeReportedItem('${r.plugin_id}','${r.id}')" style="background:rgba(255,34,80,.1);border:1px solid rgba(255,34,80,.3);color:var(--red-alert);font-family:var(--font-mono);font-size:9px;padding:3px 8px;cursor:pointer;">Remove Item</button>
+        </td>
+      </tr>`).join('');
+    });
+
+    window.dismissReport = async (id) => {
+      await supabase.from('reports').delete().eq('id', id);
+      showToast('Report dismissed');
+      document.getElementById('loadReportsBtn').click();
+    };
+    window.removeReportedItem = async (pluginId, reportId) => {
+      if (!confirm('Remove this item from the marketplace?')) return;
+      await supabase.from('plugins').update({ is_deleted: true }).eq('id', pluginId);
+      await supabase.from('reports').delete().eq('id', reportId);
+      showToast('Item removed');
+      document.getElementById('loadReportsBtn').click();
+    };
+
+    // Load report count on init
+    const { count } = await supabase.from('reports').select('*', { count: 'exact', head: true });
+    if (count > 0) {
+      const badge = document.getElementById('reportsBadge');
+      badge.textContent = count; badge.style.display = 'inline';
+    }
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = 'toast show' + (error ? ' error' : '');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+  </script>
+</body>
+</html>

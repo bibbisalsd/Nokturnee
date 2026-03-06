@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Features — Nokturne</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+</head>
+<body>
+
+  <div class="hero__lines" aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
+
+  <div class="page-banner">
+    <div class="page-banner__bg" aria-hidden="true"></div>
+    <div class="container page-banner__inner">
+      <div class="t-label"><span class="t-label-line"></span>Core System</div>
+      <h1 class="t-heading">BUILT FOR <span class="accent-violet">PRECISION</span></h1>
+      <p class="t-body">Every subsystem engineered around <strong>performance and security</strong> with a modular plugin architecture.</p>
+    </div>
+  </div>
+
+  <main class="section">
+    <div class="container">
+
+      <div class="features-grid">
+
+        <!-- Left: EAC Bypass panel + Developer Note -->
+        <div class="reveal">
+          <div class="data-panel clip-panel" style="margin-bottom:24px;">
+            <div class="data-panel__header">
+              <span>EAC Bypass</span>
+              <span class="data-panel__dot"></span>
+            </div>
+            <div class="data-panel__body">
+              <div class="perf-bar">
+                <div class="perf-bar__header">
+                  <span class="perf-bar__label">Bypass Stability</span>
+                  <span class="perf-bar__val">98%</span>
+                </div>
+                <div class="perf-bar__track"><div class="perf-bar__fill" style="--target-width:98%"></div></div>
+              </div>
+              <div class="perf-bar">
+                <div class="perf-bar__header">
+                  <span class="perf-bar__label">Detection Avoidance</span>
+                  <span class="perf-bar__val">96%</span>
+                </div>
+                <div class="perf-bar__track"><div class="perf-bar__fill" style="--target-width:96%"></div></div>
+              </div>
+              <div class="perf-bar">
+                <div class="perf-bar__header">
+                  <span class="perf-bar__label">Injection Speed</span>
+                  <span class="perf-bar__val">99%</span>
+                </div>
+                <div class="perf-bar__track"><div class="perf-bar__fill" style="--target-width:99%"></div></div>
+              </div>
+              <div class="perf-bar">
+                <div class="perf-bar__header">
+                  <span class="perf-bar__label">Patch Compatibility</span>
+                  <span class="perf-bar__val">93%</span>
+                </div>
+                <div class="perf-bar__track"><div class="perf-bar__fill" style="--target-width:93%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Developer Note -->
+          <div class="data-panel clip-card" style="padding:24px;border-color:var(--violet-dim);">
+            <div class="t-mono t-mono-violet" style="margin-bottom:10px;">⚠ Developer Note</div>
+            <p class="t-body-sm" style="color:var(--text-dim);line-height:1.75;">
+              Nokturne is currently still in active development. Some features and modules
+              listed may be partially implemented or subject to change. We are continuously
+              improving stability, performance, and coverage. Expect regular updates.
+              Access to pre-release builds is available to existing users — reach out via
+              Discord for details.
+            </p>
+          </div>
+        </div>
+
+        <!-- Right: feature set -->
+        <div class="reveal" data-delay="0.08">
+          <div class="data-panel clip-panel">
+            <div class="data-panel__header">
+              <span>Feature Set</span>
+              <span style="color:var(--cyan);font-size:9px;letter-spacing:0.18em;">ACTIVE</span>
+            </div>
+            <div class="data-panel__body">
+
+              <div class="feature-row">
+                <div class="feature-row__icon">BOT</div>
+                <div class="feature-row__info">
+                  <div class="feature-row__name">4 Separate Bots</div>
+                  <div class="feature-row__desc">Bot-A, Bot-B, Bot-C, and Bot-D — each built for distinct functions and independently configurable.</div>
+                </div>
+                <span class="feature-row__check">✓</span>
+              </div>
+
+              <div class="feature-row">
+                <div class="feature-row__icon">PY</div>
+                <div class="feature-row__info">
+                  <div class="feature-row__name">Python Plugin API</div>
+                  <div class="feature-row__desc">Fully supported Python plugin API with coroutine safety, hot-reload, and a complete reference included with access.</div>
+                </div>
+                <span class="feature-row__check">✓</span>
+              </div>
+
+              <div class="feature-row">
+                <div class="feature-row__icon">FRM</div>
+                <div class="feature-row__info">
+                  <div class="feature-row__name">Advanced Forums &amp; Roles</div>
+                  <div class="feature-row__desc">Access to an advanced community forum layout with special roles and exclusive sections for premium users.</div>
+                </div>
+                <span class="feature-row__check">✓</span>
+              </div>
+
+              <div class="feature-row">
+                <div class="feature-row__icon">$</div>
+                <div class="feature-row__info">
+                  <div class="feature-row__name">Currency System</div>
+                  <div class="feature-row__desc">An in-platform currency used to purchase plugins, unlock rewards — and yes, you can withdraw it directly to your bank.</div>
+                </div>
+                <span class="feature-row__check">✓</span>
+              </div>
+
+              <div class="feature-row">
+                <div class="feature-row__icon">EAC</div>
+                <div class="feature-row__info">
+                  <div class="feature-row__name">EAC Bypass</div>
+                  <div class="feature-row__desc">Built-in bypass layer ensuring uninterrupted operation. Updated within 48h of any relevant patch.</div>
+                </div>
+                <span class="feature-row__check">✓</span>
+              </div>
+
+              <div class="feature-row">
+                <div class="feature-row__icon">SEC</div>
+                <div class="feature-row__info">
+                  <div class="feature-row__name">HWID Auth</div>
+                  <div class="feature-row__desc">Individually compiled binaries bound to your hardware ID. No shared links, no public repos.</div>
+                </div>
+                <span class="feature-row__check">✓</span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { renderNavbar, renderFooter } from '../assets/js/modules/layout.js';
+    import { initNavbar }   from '../assets/js/modules/navbar.js';
+    import { initReveal, initPerfBars } from '../assets/js/modules/reveal.js';
+
+    renderNavbar('../', 'features');
+    renderFooter('../');
+    initNavbar();
+    initReveal();
+    initPerfBars();
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
