@@ -12,7 +12,6 @@ export function renderNavbar(root = '', activePage = '') {
     { href: `${root}pages/changelog.html`, label: 'Updates',   key: 'changelog' },
     { href: `${root}pages/forum.html`,     label: 'Forums',    key: 'forum'     },
     { href: `${root}pages/pricing.html`,   label: 'Purchase',  key: 'pricing'   },
-    { href: `${root}pages/discord.html`,   label: 'Discord',   key: 'discord'   },
   ];
 
   const navLinks = pages.map(p =>
@@ -194,7 +193,7 @@ export function renderFooter(root = '') {
         <a href="${root}pages/features.html" class="footer__link">Features</a>
         <a href="${root}pages/pricing.html"  class="footer__link">Purchase</a>
         <a href="${root}pages/forum.html"    class="footer__link">Forums</a>
-        <a href="${root}pages/discord.html"  class="footer__link">Discord</a>
+        <a href="https://discord.gg/a4yxzKzPbx" target="_blank" rel="noopener noreferrer" class="footer__link" style="color:#5865F2;">Discord</a>
       </nav>
       <div class="footer__copy">© <span id="year"></span> Nokturne. All rights reserved.</div>
     </div>

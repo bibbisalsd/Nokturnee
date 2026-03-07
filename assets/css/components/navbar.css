@@ -43,8 +43,8 @@
 .navbar__brand:hover { opacity: 0.82; }
 
 .navbar__logo {
-  height: 44px;
-  width: 330px;
+  height: 56px;
+  width: 420px;
   object-fit: contain;
   object-position: left center;
   display: block;
