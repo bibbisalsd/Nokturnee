@@ -8,10 +8,91 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/main.css" />
+  <style>
+    /* ── Admin controls ── */
+    .admin-bar { display:none; margin-bottom:16px; }
+    .admin-bar.visible { display:flex; gap:8px; flex-wrap:wrap; }
+    .admin-btn {
+      padding:9px 18px;
+      background:var(--violet-faint);
+      border:1px solid var(--violet-dim);
+      color:var(--violet);
+      font-family:var(--font-mono);
+      font-size:9px;
+      font-weight:700;
+      letter-spacing:0.16em;
+      text-transform:uppercase;
+      cursor:pointer;
+      clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);
+      transition:background 0.18s;
+    }
+    .admin-btn:hover { background:rgba(155,48,255,0.18); }
+    .admin-btn--danger { border-color:var(--red,#f44); color:var(--red,#f44); background:rgba(255,68,68,0.06); }
+    .admin-btn--danger:hover { background:rgba(255,68,68,0.15); }
+    .admin-btn--cyan { border-color:var(--cyan); color:var(--cyan); background:rgba(0,255,255,0.04); }
+    .admin-btn--cyan:hover { background:rgba(0,255,255,0.12); }
+
+    /* ── Add feature modal ── */
+    .feat-modal-overlay {
+      display:none; position:fixed; inset:0; z-index:999;
+      background:rgba(0,0,0,0.7); align-items:center; justify-content:center;
+    }
+    .feat-modal-overlay.open { display:flex; }
+    .feat-modal {
+      background:var(--bg-surface); border:1px solid var(--border-mid);
+      clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+      width:90%; max-width:480px; overflow:hidden;
+    }
+    .feat-modal__hd {
+      padding:12px 20px; border-bottom:1px solid var(--border);
+      background:var(--violet-faint); font-family:var(--font-mono);
+      font-size:9px; letter-spacing:0.22em; text-transform:uppercase;
+      color:var(--violet); display:flex; justify-content:space-between; align-items:center;
+    }
+    .feat-modal__body { padding:20px; }
+    .feat-input {
+      width:100%; background:var(--bg-elevated); border:1px solid var(--border);
+      color:var(--text); font-family:var(--font-body); font-size:13px;
+      padding:10px 14px; outline:none; margin-bottom:10px; box-sizing:border-box;
+      clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);
+      transition:border-color 0.2s;
+    }
+    .feat-input:focus { border-color:var(--violet-dim); }
+    .feat-input::placeholder { color:var(--text-faint); }
+    .feat-textarea { resize:vertical; min-height:80px; font-weight:300; }
+
+    /* ── Feature row admin extras ── */
+    .feature-row { position:relative; }
+    .feature-row__actions {
+      display:none; gap:6px; align-items:center; margin-left:auto; padding-left:12px; flex-shrink:0;
+    }
+    .feature-row__actions.visible { display:flex; }
+    .feat-act-btn {
+      width:26px; height:26px; display:flex; align-items:center; justify-content:center;
+      background:var(--bg-elevated); border:1px solid var(--border);
+      color:var(--text-faint); font-size:12px; cursor:pointer;
+      transition:all 0.15s; border-radius:2px;
+    }
+    .feat-act-btn:hover { border-color:var(--violet-dim); color:var(--violet); }
+    .feat-act-btn--del:hover { border-color:var(--red,#f44); color:var(--red,#f44); }
+
+    /* ── Toast ── */
+    .toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
+      background:var(--bg-elevated); border:1px solid var(--violet-dim);
+      color:var(--text); font-family:var(--font-mono); font-size:11px;
+      padding:12px 24px; z-index:9999; opacity:0;
+      transition:transform 0.3s ease, opacity 0.3s ease;
+      clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);
+    }
+    .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+    .toast.error { border-color:var(--red,#f44); }
+  </style>
 </head>
 <body>
 
   <div class="hero__lines" aria-hidden="true" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></div>
+  <div class="toast" id="toast"></div>
 
   <div class="page-banner">
     <div class="page-banner__bg" aria-hidden="true"></div>
@@ -79,70 +160,22 @@
           </div>
         </div>
 
-        <!-- Right: feature set -->
+        <!-- Right: dynamic feature set -->
         <div class="reveal" data-delay="0.08">
           <div class="data-panel clip-panel">
             <div class="data-panel__header">
               <span>Feature Set</span>
               <span style="color:var(--cyan);font-size:9px;letter-spacing:0.18em;">ACTIVE</span>
             </div>
-            <div class="data-panel__body">
-
-              <div class="feature-row">
-                <div class="feature-row__icon">BOT</div>
-                <div class="feature-row__info">
-                  <div class="feature-row__name">4 Separate Bots</div>
-                  <div class="feature-row__desc">Bot-A, Bot-B, Bot-C, and Bot-D — each built for distinct functions and independently configurable.</div>
-                </div>
-                <span class="feature-row__check">✓</span>
-              </div>
-
-              <div class="feature-row">
-                <div class="feature-row__icon">PY</div>
-                <div class="feature-row__info">
-                  <div class="feature-row__name">Python Plugin API</div>
-                  <div class="feature-row__desc">Fully supported Python plugin API with coroutine safety, hot-reload, and a complete reference included with access.</div>
-                </div>
-                <span class="feature-row__check">✓</span>
-              </div>
-
-              <div class="feature-row">
-                <div class="feature-row__icon">FRM</div>
-                <div class="feature-row__info">
-                  <div class="feature-row__name">Advanced Forums &amp; Roles</div>
-                  <div class="feature-row__desc">Access to an advanced community forum layout with special roles and exclusive sections for premium users.</div>
-                </div>
-                <span class="feature-row__check">✓</span>
-              </div>
-
-              <div class="feature-row">
-                <div class="feature-row__icon">$</div>
-                <div class="feature-row__info">
-                  <div class="feature-row__name">Currency System</div>
-                  <div class="feature-row__desc">An in-platform currency used to purchase plugins, unlock rewards — and yes, you can withdraw it directly to your bank.</div>
-                </div>
-                <span class="feature-row__check">✓</span>
-              </div>
-
-              <div class="feature-row">
-                <div class="feature-row__icon">EAC</div>
-                <div class="feature-row__info">
-                  <div class="feature-row__name">EAC Bypass</div>
-                  <div class="feature-row__desc">Built-in bypass layer ensuring uninterrupted operation. Updated within 48h of any relevant patch.</div>
-                </div>
-                <span class="feature-row__check">✓</span>
-              </div>
-
-              <div class="feature-row">
-                <div class="feature-row__icon">SEC</div>
-                <div class="feature-row__info">
-                  <div class="feature-row__name">HWID Auth</div>
-                  <div class="feature-row__desc">Individually compiled binaries bound to your hardware ID. No shared links, no public repos.</div>
-                </div>
-                <span class="feature-row__check">✓</span>
-              </div>
-
+            <div class="data-panel__body" id="featureList">
+              <div style="text-align:center;padding:24px;color:var(--text-faint);font-family:var(--font-mono);font-size:11px;">Loading features...</div>
             </div>
+          </div>
+
+          <!-- Admin controls (hidden by default) -->
+          <div class="admin-bar" id="adminBar">
+            <button class="admin-btn" id="addFeatureBtn">+ Add Feature</button>
+            <button class="admin-btn admin-btn--cyan" id="shuffleBtn">Shuffle Order</button>
           </div>
         </div>
 
@@ -150,10 +183,31 @@
     </div>
   </main>
 
+  <!-- Add Feature Modal -->
+  <div class="feat-modal-overlay" id="addModal">
+    <div class="feat-modal">
+      <div class="feat-modal__hd">
+        <span>Add Feature</span>
+        <button id="closeModal" style="background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:16px;line-height:1;">✕</button>
+      </div>
+      <div class="feat-modal__body">
+        <input class="feat-input" id="inIcon" placeholder="Icon label (e.g. BOT, PY, SEC)" maxlength="4" />
+        <input class="feat-input" id="inName" placeholder="Feature name" />
+        <textarea class="feat-input feat-textarea" id="inDesc" placeholder="Feature description..."></textarea>
+        <button class="admin-btn" id="submitFeature" style="margin-top:6px;">Add Feature</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
     import { renderNavbar, renderFooter } from '../assets/js/modules/layout.js';
     import { initNavbar }   from '../assets/js/modules/navbar.js';
     import { initReveal, initPerfBars } from '../assets/js/modules/reveal.js';
+
+    const SUPABASE_URL = 'https://mmovqnaeozhzzeazrgdm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_CPoq9v6zAGVfRH4scFbxcA_gMRX4FJs';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     renderNavbar('../', 'features');
     renderFooter('../');
@@ -161,6 +215,189 @@
     initReveal();
     initPerfBars();
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    let isAdmin = false;
+    let features = [];
+
+    // ── Check admin status ──
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      const { data: roleData } = await supabase
+        .from('user_roles').select('role').eq('user_id', session.user.id).single();
+      isAdmin = ['admin', 'moderator'].includes(roleData?.role);
+    }
+
+    if (isAdmin) {
+      document.getElementById('adminBar').classList.add('visible');
+    }
+
+    // ── Load features ──
+    await loadFeatures();
+
+    async function loadFeatures() {
+      const { data, error } = await supabase
+        .from('site_features')
+        .select('*')
+        .order('sort_order', { ascending: true });
+
+      if (error) {
+        document.getElementById('featureList').innerHTML =
+          `<div style="text-align:center;padding:24px;color:var(--red,#f44);font-family:var(--font-mono);font-size:11px;">Failed to load features</div>`;
+        return;
+      }
+
+      features = data || [];
+      renderFeatures();
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function renderFeatures() {
+      const list = document.getElementById('featureList');
+      if (!features.length) {
+        list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-faint);font-family:var(--font-mono);font-size:11px;">No features listed yet.</div>`;
+        return;
+      }
+
+      list.innerHTML = features.map((f, i) => `
+        <div class="feature-row" data-id="${f.id}">
+          <div class="feature-row__icon">${escHtml(f.icon)}</div>
+          <div class="feature-row__info">
+            <div class="feature-row__name">${escHtml(f.name)}</div>
+            <div class="feature-row__desc">${escHtml(f.description)}</div>
+          </div>
+          <span class="feature-row__check">✓</span>
+          <div class="feature-row__actions${isAdmin ? ' visible' : ''}">
+            ${i > 0 ? `<button class="feat-act-btn" data-move="up" data-id="${f.id}" title="Move up">▲</button>` : `<button class="feat-act-btn" style="visibility:hidden">▲</button>`}
+            ${i < features.length - 1 ? `<button class="feat-act-btn" data-move="down" data-id="${f.id}" title="Move down">▼</button>` : `<button class="feat-act-btn" style="visibility:hidden">▼</button>`}
+            <button class="feat-act-btn feat-act-btn--del" data-delete="${f.id}" title="Remove feature">✕</button>
+          </div>
+        </div>
+      `).join('');
+
+      // Bind move buttons
+      list.querySelectorAll('[data-move]').forEach(btn => {
+        btn.addEventListener('click', () => moveFeature(btn.dataset.id, btn.dataset.move));
+      });
+
+      // Bind delete buttons
+      list.querySelectorAll('[data-delete]').forEach(btn => {
+        btn.addEventListener('click', () => deleteFeature(btn.dataset.delete));
+      });
+    }
+
+    // ── Move feature up/down ──
+    async function moveFeature(id, direction) {
+      const idx = features.findIndex(f => f.id === id);
+      if (idx < 0) return;
+      const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+      if (swapIdx < 0 || swapIdx >= features.length) return;
+
+      const a = features[idx];
+      const b = features[swapIdx];
+
+      // Swap sort_order values in DB
+      const [resA, resB] = await Promise.all([
+        supabase.from('site_features').update({ sort_order: b.sort_order }).eq('id', a.id),
+        supabase.from('site_features').update({ sort_order: a.sort_order }).eq('id', b.id),
+      ]);
+
+      if (resA.error || resB.error) {
+        showToast('Failed to reorder', true);
+        return;
+      }
+
+      // Swap locally
+      const tmpOrder = a.sort_order;
+      a.sort_order = b.sort_order;
+      b.sort_order = tmpOrder;
+      features[idx] = b;
+      features[swapIdx] = a;
+      renderFeatures();
+    }
+
+    // ── Delete feature ──
+    async function deleteFeature(id) {
+      if (!confirm('Remove this feature?')) return;
+
+      const { error } = await supabase.from('site_features').delete().eq('id', id);
+      if (error) { showToast('Failed to remove: ' + error.message, true); return; }
+
+      features = features.filter(f => f.id !== id);
+      renderFeatures();
+      showToast('Feature removed');
+    }
+
+    // ── Shuffle features ──
+    document.getElementById('shuffleBtn').addEventListener('click', async () => {
+      if (features.length < 2) return;
+
+      // Fisher-Yates shuffle
+      const shuffled = [...features];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      // Update sort_order for each
+      const updates = shuffled.map((f, i) =>
+        supabase.from('site_features').update({ sort_order: i }).eq('id', f.id)
+      );
+      const results = await Promise.all(updates);
+
+      if (results.some(r => r.error)) {
+        showToast('Some reorders failed', true);
+        await loadFeatures();
+        return;
+      }
+
+      shuffled.forEach((f, i) => f.sort_order = i);
+      features = shuffled;
+      renderFeatures();
+      showToast('Features shuffled');
+    });
+
+    // ── Add feature modal ──
+    const modal = document.getElementById('addModal');
+    document.getElementById('addFeatureBtn').addEventListener('click', () => modal.classList.add('open'));
+    document.getElementById('closeModal').addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+
+    document.getElementById('submitFeature').addEventListener('click', async () => {
+      const icon = document.getElementById('inIcon').value.trim().toUpperCase();
+      const name = document.getElementById('inName').value.trim();
+      const desc = document.getElementById('inDesc').value.trim();
+
+      if (!icon) { showToast('Icon label is required', true); return; }
+      if (!name) { showToast('Name is required', true); return; }
+      if (!desc) { showToast('Description is required', true); return; }
+
+      const nextOrder = features.length ? Math.max(...features.map(f => f.sort_order)) + 1 : 0;
+
+      const { data, error } = await supabase.from('site_features').insert({
+        icon, name, description: desc, sort_order: nextOrder
+      }).select().single();
+
+      if (error) { showToast('Failed: ' + error.message, true); return; }
+
+      features.push(data);
+      renderFeatures();
+      modal.classList.remove('open');
+      document.getElementById('inIcon').value = '';
+      document.getElementById('inName').value = '';
+      document.getElementById('inDesc').value = '';
+      showToast('Feature added');
+    });
+
+    // ── Toast ──
+    function showToast(msg, isError) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast show' + (isError ? ' error' : '');
+      setTimeout(() => t.className = 'toast', 2500);
+    }
   </script>
 </body>
 </html>
