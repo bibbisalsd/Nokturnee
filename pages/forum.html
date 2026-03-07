@@ -707,7 +707,7 @@
       const btn   = document.getElementById('submitPost');
       if (!title || !body) { toast('Title and body required', true); return; }
       btn.disabled = true; btn.textContent = 'Publishing...';
-      const { error } = await supabase.from('forum_posts').insert({ user_id: userId, username, title, body, category: cat, flair, is_pinned: pin, upvotes: 0, view_count: 0 });
+      const { error } = await supabase.from('forum_posts').insert({ user_id: userId, username, title, content: body, category: cat, flair, is_pinned: pin, upvotes: 0, view_count: 0 });
       btn.disabled = false; btn.textContent = 'Publish Post';
       if (error) { toast('Error: ' + error.message, true); return; }
       document.getElementById('pTitle').value = ''; document.getElementById('pBody').value = '';
@@ -859,7 +859,7 @@
         </div>
         <div id="replySection"></div>`;
 
-      document.getElementById('tBody').innerHTML = marked.parse(p.body||'');
+      document.getElementById('tBody').innerHTML = marked.parse(p.content||'');
       document.querySelector('[data-user]')?.addEventListener('click', e => { window.location.href = `forum-user.html?user=${e.target.dataset.user}`; });
       document.getElementById('delPostBtn')?.addEventListener('click', async () => {
         if (!confirm('Delete this post?')) return;
