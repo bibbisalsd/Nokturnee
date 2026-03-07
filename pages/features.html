@@ -192,7 +192,7 @@
       </div>
       <div class="feat-modal__body">
         <input class="feat-input" id="inIcon" placeholder="Icon label (e.g. BOT, PY, SEC)" maxlength="4" />
-        <input class="feat-input" id="inName" placeholder="Feature name" />
+        <input class="feat-input" id="inName" placeholder="Feature title" />
         <textarea class="feat-input feat-textarea" id="inDesc" placeholder="Feature description..."></textarea>
         <button class="admin-btn" id="submitFeature" style="margin-top:6px;">Add Feature</button>
       </div>
@@ -236,7 +236,7 @@
 
     async function loadFeatures() {
       const { data, error } = await supabase
-        .from('site_features')
+        .from('features')
         .select('*')
         .order('sort_order', { ascending: true });
 
@@ -265,7 +265,7 @@
         <div class="feature-row" data-id="${f.id}">
           <div class="feature-row__icon">${escHtml(f.icon)}</div>
           <div class="feature-row__info">
-            <div class="feature-row__name">${escHtml(f.name)}</div>
+            <div class="feature-row__name">${escHtml(f.title)}</div>
             <div class="feature-row__desc">${escHtml(f.description)}</div>
           </div>
           <span class="feature-row__check">✓</span>
@@ -300,8 +300,8 @@
 
       // Swap sort_order values in DB
       const [resA, resB] = await Promise.all([
-        supabase.from('site_features').update({ sort_order: b.sort_order }).eq('id', a.id),
-        supabase.from('site_features').update({ sort_order: a.sort_order }).eq('id', b.id),
+        supabase.from('features').update({ sort_order: b.sort_order }).eq('id', a.id),
+        supabase.from('features').update({ sort_order: a.sort_order }).eq('id', b.id),
       ]);
 
       if (resA.error || resB.error) {
@@ -322,7 +322,7 @@
     async function deleteFeature(id) {
       if (!confirm('Remove this feature?')) return;
 
-      const { error } = await supabase.from('site_features').delete().eq('id', id);
+      const { error } = await supabase.from('features').delete().eq('id', id);
       if (error) { showToast('Failed to remove: ' + error.message, true); return; }
 
       features = features.filter(f => f.id !== id);
@@ -343,7 +343,7 @@
 
       // Update sort_order for each
       const updates = shuffled.map((f, i) =>
-        supabase.from('site_features').update({ sort_order: i }).eq('id', f.id)
+        supabase.from('features').update({ sort_order: i }).eq('id', f.id)
       );
       const results = await Promise.all(updates);
 
@@ -371,13 +371,13 @@
       const desc = document.getElementById('inDesc').value.trim();
 
       if (!icon) { showToast('Icon label is required', true); return; }
-      if (!name) { showToast('Name is required', true); return; }
+      if (!name) { showToast('Title is required', true); return; }
       if (!desc) { showToast('Description is required', true); return; }
 
       const nextOrder = features.length ? Math.max(...features.map(f => f.sort_order)) + 1 : 0;
 
-      const { data, error } = await supabase.from('site_features').insert({
-        icon, name, description: desc, sort_order: nextOrder
+      const { data, error } = await supabase.from('features').insert({
+        icon, title: name, description: desc, sort_order: nextOrder
       }).select().single();
 
       if (error) { showToast('Failed: ' + error.message, true); return; }

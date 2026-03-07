@@ -9,8 +9,8 @@ const SUPABASE_KEY = 'sb_publishable_CPoq9v6zAGVfRH4scFbxcA_gMRX4FJs';
 export function renderNavbar(root = '', activePage = '') {
   const pages = [
     { href: `${root}pages/features.html`,  label: 'Features',  key: 'features'  },
-    { href: `${root}pages/forum.html`,     label: 'Forums',    key: 'forum'     },
     { href: `${root}pages/changelog.html`, label: 'Updates',   key: 'changelog' },
+    { href: `${root}pages/forum.html`,     label: 'Forums',    key: 'forum'     },
     { href: `${root}pages/pricing.html`,   label: 'Purchase',  key: 'pricing'   },
     { href: `${root}pages/discord.html`,   label: 'Discord',   key: 'discord'   },
   ];

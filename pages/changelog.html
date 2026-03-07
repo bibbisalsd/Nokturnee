@@ -10,12 +10,6 @@
   <link rel="stylesheet" href="../assets/css/main.css" />
   <style>
     body { padding-top: var(--nav-height); }
-    .page-tabs { display:flex;align-items:center;justify-content:center;background:var(--bg-surface);border-bottom:1px solid var(--border);position:sticky;top:var(--nav-height);z-index:50; }
-    .page-tab { padding:14px 32px;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-faint);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;margin-bottom:-1px; }
-    .page-tab:hover { color:var(--text-dim); }
-    .page-tab.active { color:var(--violet);border-bottom-color:var(--violet); }
-    .tab-panel { display:none; }
-    .tab-panel.active { display:block; }
     .cl-page { max-width:940px;margin:0 auto;padding:36px 24px 80px; }
     .admin-bar { display:flex;align-items:center;gap:10px;margin-bottom:28px; }
     .btn-admin { padding:9px 22px;background:var(--violet-faint);border:1px solid var(--violet-dim);color:var(--violet);font-family:var(--font-mono);font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);transition:background .18s; }
@@ -76,19 +70,6 @@
     .reaction-btn:hover { border-color:var(--border-mid); }
     .reaction-btn.reacted { border-color:var(--violet-dim);background:var(--violet-faint); }
     .reaction-btn__count { color:var(--text-faint);font-size:9px; }
-    .features-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px; }
-    .feat-card { background:var(--bg-surface);border:1px solid var(--border);clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));padding:20px;transition:border-color .18s,box-shadow .2s;position:relative; }
-    .feat-card:hover { border-color:var(--border-mid);box-shadow:0 4px 20px rgba(0,0,0,.4); }
-    .feat-card__icon { font-size:26px;margin-bottom:12px;line-height:1; }
-    .feat-card__title { font-family:var(--font-display);font-size:17px;letter-spacing:.1em;color:var(--text);margin-bottom:8px; }
-    .feat-card__divider { height:1px;background:linear-gradient(90deg,var(--violet-dim),transparent);margin-bottom:10px; }
-    .feat-card__desc { font-size:12px;font-weight:300;color:var(--text-dim);line-height:1.7; }
-    .feat-card__admin { display:flex;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border); }
-    .feat-move-btn { padding:4px 8px;background:none;border:1px solid var(--border);color:var(--text-faint);font-size:10px;cursor:pointer;clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%);transition:all .15s; }
-    .feat-move-btn:hover { border-color:var(--border-mid);color:var(--text-dim); }
-    .feat-move-btn:disabled { opacity:.3;cursor:not-allowed; }
-    .feat-add-panel { background:var(--bg-surface);border:1px solid var(--border-mid);clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));overflow:hidden;margin-bottom:24px;display:none; }
-    .feat-add-panel.open { display:block; }
     .toast { position:fixed;bottom:28px;right:28px;z-index:9999;padding:10px 20px;background:var(--bg-elevated);border:1px solid var(--violet-dim);clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--violet);display:none; }
     .toast.show { display:block; }
     .toast.err { color:var(--red-alert);border-color:rgba(255,34,80,.4); }
@@ -114,11 +95,6 @@
     </div>
   </div>
 
-  <div class="page-tabs">
-    <button class="page-tab active" data-page="features">Features</button>
-    <button class="page-tab" data-page="updates">Updates</button>
-  </div>
-
   <main class="section">
     <div class="cl-page">
 
@@ -126,40 +102,13 @@
         <div class="cl-gate">
           <div style="font-size:32px;">🔒</div>
           <div class="cl-gate__title">MEMBERS ONLY</div>
-          <div class="cl-gate__sub">Log in to access platform updates and features.</div>
+          <div class="cl-gate__sub">Log in to access platform updates.</div>
           <a href="login.html" class="btn btn-primary" style="padding:14px 40px;font-size:11px;">Log In</a>
         </div>
       </div>
 
-      <!-- FEATURES TAB -->
-      <div class="tab-panel active" id="panel-features">
-        <div class="admin-bar" id="featAdminBar" style="display:none;">
-          <button class="btn-admin" id="featAddBtn">+ Add Feature</button>
-        </div>
-        <div class="feat-add-panel" id="featAddPanel">
-          <div class="compose-panel__hd">
-            <span id="featPanelTitle">New Feature</span>
-            <button id="featAddClose" style="background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:16px;">✕</button>
-          </div>
-          <div class="compose-panel__body">
-            <input type="hidden" id="featEditId" />
-            <div class="cl-form-row">
-              <input class="cl-input" id="featIcon" placeholder="Icon emoji" style="max-width:80px;" />
-              <input class="cl-input" id="featTitle" placeholder="Feature title" />
-            </div>
-            <textarea class="cl-textarea" id="featDesc" placeholder="Description..."></textarea>
-            <div class="compose-actions">
-              <button class="btn-publish" id="featSaveBtn">Save Feature</button>
-            </div>
-          </div>
-        </div>
-        <div class="features-grid" id="featuresGrid">
-          <div class="cl-loading">Loading features...</div>
-        </div>
-      </div>
-
-      <!-- UPDATES TAB -->
-      <div class="tab-panel" id="panel-updates">
+      <!-- UPDATES -->
+      <div id="panel-updates">
         <div class="admin-bar" id="updAdminBar" style="display:none;">
           <button class="btn-admin" id="updAddBtn">+ Post Update</button>
         </div>
@@ -210,116 +159,20 @@
     const userId   = session?.user?.id   || null;
     const username = session?.user?.user_metadata?.full_name || session?.user?.user_metadata?.user_name || 'Member';
 
-    let isAdmin = false, allUpdates = [], allFeatures = [];
+    let isAdmin = false, allUpdates = [];
     let reactionsMap = {}, myReactions = {};
 
     if (!userId) {
       document.getElementById('gateWrap').style.display = 'block';
-      document.getElementById('panel-features').style.display = 'none';
       document.getElementById('panel-updates').style.display = 'none';
     } else {
       const { data: roleData } = await supabase.from('user_roles').select('role').eq('user_id', userId).single();
       isAdmin = ['admin','moderator'].includes(roleData?.role);
       if (isAdmin) {
-        document.getElementById('featAdminBar').style.display = 'flex';
         document.getElementById('updAdminBar').style.display = 'flex';
       }
       buildModuleSlots();
-      await Promise.all([loadFeatures(), loadUpdates()]);
-    }
-
-    // Tab switching
-    document.querySelectorAll('.page-tab').forEach(btn => btn.addEventListener('click', () => {
-      const p = btn.dataset.page;
-      document.querySelectorAll('.page-tab').forEach(b => b.classList.toggle('active', b.dataset.page === p));
-      document.querySelectorAll('.tab-panel').forEach(el => el.classList.toggle('active', el.id === 'panel-' + p));
-    }));
-
-    // ════════════════ FEATURES ════════════════
-    async function loadFeatures() {
-      const { data } = await supabase.from('features').select('*').order('sort_order', { ascending: true });
-      allFeatures = data || [];
-      renderFeatures();
-    }
-
-    function renderFeatures() {
-      const grid = document.getElementById('featuresGrid');
-      if (!allFeatures.length) { grid.innerHTML = '<div class="cl-empty" style="grid-column:1/-1;">No features listed yet.</div>'; return; }
-      grid.innerHTML = allFeatures.map((f, i) => `
-        <div class="feat-card">
-          <div class="feat-card__icon">${esc(f.icon||'⬡')}</div>
-          <div class="feat-card__title">${esc(f.title)}</div>
-          <div class="feat-card__divider"></div>
-          <div class="feat-card__desc">${esc(f.description||'')}</div>
-          ${isAdmin ? `<div class="feat-card__admin">
-            <button class="feat-move-btn" data-fid="${f.id}" data-dir="up" ${i===0?'disabled':''}>▲</button>
-            <button class="feat-move-btn" data-fid="${f.id}" data-dir="down" ${i===allFeatures.length-1?'disabled':''}>▼</button>
-            <button class="mod-btn" data-fedit="${f.id}" style="margin-left:auto;">Edit</button>
-            <button class="mod-btn del" data-fdel="${f.id}">Remove</button>
-          </div>` : ''}
-        </div>`).join('');
-
-      if (isAdmin) {
-        grid.querySelectorAll('[data-fedit]').forEach(b => b.addEventListener('click', () => openFeatEdit(b.dataset.fedit)));
-        grid.querySelectorAll('[data-fdel]').forEach(b => b.addEventListener('click', () => deleteFeat(b.dataset.fdel)));
-        grid.querySelectorAll('[data-fid][data-dir]').forEach(b => b.addEventListener('click', () => moveFeat(b.dataset.fid, b.dataset.dir)));
-      }
-    }
-
-    document.getElementById('featAddBtn')?.addEventListener('click', () => {
-      ['featEditId','featIcon','featTitle','featDesc'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
-      document.getElementById('featPanelTitle').textContent = 'New Feature';
-      document.getElementById('featAddPanel').classList.add('open');
-    });
-    document.getElementById('featAddClose')?.addEventListener('click', () => document.getElementById('featAddPanel').classList.remove('open'));
-
-    function openFeatEdit(id) {
-      const f = allFeatures.find(x => x.id === id); if (!f) return;
-      document.getElementById('featEditId').value = f.id;
-      document.getElementById('featIcon').value   = f.icon||'';
-      document.getElementById('featTitle').value  = f.title;
-      document.getElementById('featDesc').value   = f.description||'';
-      document.getElementById('featPanelTitle').textContent = 'Edit Feature';
-      document.getElementById('featAddPanel').classList.add('open');
-    }
-
-    document.getElementById('featSaveBtn')?.addEventListener('click', async () => {
-      const id    = document.getElementById('featEditId').value;
-      const icon  = document.getElementById('featIcon').value.trim()||'⬡';
-      const title = document.getElementById('featTitle').value.trim();
-      const desc  = document.getElementById('featDesc').value.trim();
-      const btn   = document.getElementById('featSaveBtn');
-      if (!title) { toast('Title required', true); return; }
-      btn.disabled = true; btn.textContent = 'Saving...';
-      try {
-        if (id) { await supabase.from('features').update({ icon, title, description: desc }).eq('id', id); }
-        else {
-          const maxOrd = allFeatures.length ? Math.max(...allFeatures.map(f=>f.sort_order||0))+1 : 0;
-          await supabase.from('features').insert({ icon, title, description: desc, sort_order: maxOrd });
-        }
-        document.getElementById('featAddPanel').classList.remove('open');
-        toast(id ? 'Feature updated' : 'Feature added');
-        await loadFeatures();
-      } catch(e) { toast('Error: '+e.message, true); }
-      btn.disabled = false; btn.textContent = 'Save Feature';
-    });
-
-    async function deleteFeat(id) {
-      if (!confirm('Remove this feature?')) return;
-      await supabase.from('features').delete().eq('id', id);
-      toast('Feature removed'); await loadFeatures();
-    }
-
-    async function moveFeat(id, dir) {
-      const idx = allFeatures.findIndex(f => f.id === id); if (idx < 0) return;
-      const swapIdx = dir === 'up' ? idx-1 : idx+1;
-      if (swapIdx < 0 || swapIdx >= allFeatures.length) return;
-      const a = allFeatures[idx], b = allFeatures[swapIdx];
-      await Promise.all([
-        supabase.from('features').update({ sort_order: b.sort_order }).eq('id', a.id),
-        supabase.from('features').update({ sort_order: a.sort_order }).eq('id', b.id),
-      ]);
-      await loadFeatures();
+      await loadUpdates();
     }
 
     // ════════════════ UPDATES ════════════════
